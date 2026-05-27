@@ -1,0 +1,10 @@
+/vendor/
+/.claude/
+/.mcp.json
+/storage/logs/
+/storage/sessions/
+/storage/cache/
+*.log
+.env
+.DS_Store
+Thumbs.db

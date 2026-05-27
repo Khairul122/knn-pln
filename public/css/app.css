@@ -1,0 +1,51 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+    --pln-blue:       #003D99;
+    --pln-blue-light: #0052CC;
+    --pln-yellow:     #FFD600;
+    --pln-yellow-dim: #F5C400;
+    --bg-dark:        #060B1A;
+    --bg-card:        rgba(10, 20, 50, 0.85);
+    --border-glow:    rgba(0, 82, 204, 0.4);
+    --text-primary:   #EAF0FF;
+    --text-secondary: #7A8BAD;
+    --danger:         #FF4D6A;
+    --success:        #00D68F;
+}
+
+html, body {
+    height: 100%;
+    font-family: 'Inter', sans-serif;
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    overflow-x: hidden;
+}
+
+/* ── Login Page ─────────────────────────────────────── */
+#login-root {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+/* ── Dashboard stub ──────────────────────────────────── */
+.dashboard-wrap {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 1rem;
+    font-size: 1.25rem;
+    color: var(--text-primary);
+}
+
+.dashboard-wrap a {
+    color: var(--pln-yellow);
+    text-decoration: none;
+    font-size: 0.9rem;
+    opacity: 0.8;
+}

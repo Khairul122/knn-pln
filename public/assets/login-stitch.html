@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Login - PLN GridRisk</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed": "#cae6ff",
+                        "on-surface-variant": "#3e4850",
+                        "secondary-fixed": "#d3e4ff",
+                        "inverse-surface": "#213145",
+                        "inverse-on-surface": "#eaf1ff",
+                        "surface-container-low": "#eff4ff",
+                        "on-primary-container": "#00344f",
+                        "tertiary-fixed": "#dbe4ea",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed": "#001e2f",
+                        "background": "#f8f9ff",
+                        "primary-fixed-dim": "#8cceff",
+                        "on-secondary-fixed": "#001c38",
+                        "on-tertiary-container": "#293237",
+                        "inverse-primary": "#8cceff",
+                        "on-primary-fixed-variant": "#004b6f",
+                        "on-secondary-fixed-variant": "#004881",
+                        "surface-tint": "#006492",
+                        "on-tertiary": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "secondary-container": "#7eb6fe",
+                        "on-surface": "#0b1c30",
+                        "surface-container-high": "#dce9ff",
+                        "secondary": "#1b60a2",
+                        "on-error-container": "#93000a",
+                        "surface-dim": "#cbdbf5",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed-variant": "#3f484d",
+                        "on-error": "#ffffff",
+                        "surface-container-highest": "#d3e4fe",
+                        "surface": "#f8f9ff",
+                        "outline-variant": "#bec8d2",
+                        "on-secondary-container": "#00477e",
+                        "on-tertiary-fixed": "#141d21",
+                        "error": "#ba1a1a",
+                        "tertiary-container": "#919aa0",
+                        "secondary-fixed-dim": "#a2c9ff",
+                        "tertiary": "#576065",
+                        "surface-bright": "#f8f9ff",
+                        "surface-container": "#e5eeff",
+                        "surface-variant": "#d3e4fe",
+                        "on-background": "#0b1c30",
+                        "tertiary-fixed-dim": "#bfc8ce"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "body-sm": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "label-caps": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .bg-grid-pattern {
+            background-image: radial-gradient(#006492 0.5px, transparent 0.5px);
+            background-size: 24px 24px;
+        }
+        .gradient-mesh {
+            background-color: #f8f9ff;
+            background-image: 
+                radial-gradient(at 0% 0%, hsla(202,100%,90%,1) 0, transparent 50%), 
+                radial-gradient(at 100% 100%, hsla(210,100%,95%,1) 0, transparent 50%);
+        }
+    </style>
+</head>
+<body class="bg-background font-body-lg text-on-background min-h-screen flex items-center justify-center p-4 gradient-mesh overflow-hidden relative">
+<!-- Decorative Elements -->
+<div class="absolute inset-0 bg-grid-pattern opacity-10 pointer-events-none"></div>
+<div class="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-primary-fixed/20 rounded-full blur-[120px] pointer-events-none"></div>
+<div class="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-secondary-fixed/20 rounded-full blur-[100px] pointer-events-none"></div>
+<main class="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 rounded-xl overflow-hidden shadow-2xl relative z-10 bg-surface-container-lowest">
+<!-- Left Side: Visual/Context -->
+<div class="hidden md:flex flex-col justify-between p-12 bg-primary relative overflow-hidden">
+<!-- Background Image Pattern -->
+<img class="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-overlay" data-alt="A cinematic, wide-angle shot of a high-voltage electrical grid under a clear twilight sky. The steel towers are silhouetted against a gradient of deep blue and orange. Overlayed is a glowing blue digital network of interconnected nodes and data streams, representing smart grid analytics and predictive maintenance. The atmosphere is professional, technical, and serene, using a corporate primary blue color palette." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9Te0zJDZv47PBi4x3VcpLZX_V4bk4-k7_xE85p7bmhIdww-LFPg9ZZMhmbfuT0Qp8MExdkU8d3YaNLpcuQyUUSkZ3BpS92QhcjAFg-puaxVQ0sxzSvzO3QpgeG9thhQc1H0usjqV3SUotk7t1po2fyre7vwybaT283NhfoCWwsfS_NVlE9WgwuKAYkE-e-q0AuhifTum1h24WE7vwYLQf-YPoyeNz1HF9QC9ajoIuMbTN9fX1Yk2-t3Dy4fug1AtwPtvgOcD8pNhJ"/>
+<div class="relative z-20">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-lg">
+<span class="material-symbols-outlined text-primary text-[28px]" style="font-variation-settings: 'FILL' 1;">bolt</span>
+</div>
+<span class="font-headline-md text-white tracking-tight">PLN GridRisk</span>
+</div>
+</div>
+<div class="relative z-20 mt-auto">
+<h1 class="font-display-lg text-white mb-4">Protecting the Grid Through Intelligence.</h1>
+<p class="font-body-lg text-primary-fixed opacity-90 max-w-sm">
+                    Leveraging advanced KNN predictive analytics to maintain national power stability and minimize infrastructure risks.
+                </p>
+<div class="mt-8 flex gap-4">
+<div class="flex -space-x-2">
+<img class="w-8 h-8 rounded-full border-2 border-primary" data-alt="Close-up portrait of a professional male engineer wearing a white hardhat and reflective vest, smiling confidently. Soft outdoor lighting with a blurred industrial background. High-quality corporate headshot style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIT84ZUu_KxmJVhyuL_9MRD6OqYaePNTHMJrIowVWYT3G6s2UiESz_1atZNUw3oVweVl5GEFRePQfEtW9vxzuP5CU9Bzgdi7ed2fPodHRiv2bU0_u2qHfvS2fh2r4P0B7ui8O_gASgh9c9GNOBwVc67DYLDtTI1w85o4k5NRxqjxTNQdlHDzWYPT8-oIJmtS4hSAJQqOsZDhvDElxup7myuuzYHcYgd9V3ow69rk8XDZzGCLMd4dZ_muRFvM10H7xgFQxO6Hl3ZbmO"/>
+<img class="w-8 h-8 rounded-full border-2 border-primary" data-alt="Portrait of a female data analyst in a modern office environment, wearing professional business attire. She is looking at the camera with a focused and intelligent expression. Soft lighting with a cool blue corporate aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrxmamS1VQJuNMyUX23BMXSfjSQWPKBAe0JClGnVuSFS8WUF7T6zyxOIHiQHytgtMDlOBGJVFw1YGXq60S1odr9vZZaWwL3qD8cER-xin8CwnFbp9B8e6bG_rD4CGtEqFS9qxmdR5YzVEdv5h-C_mDvZKoD4vmLqE4bexAaZy55-PnvuvpXqV_2VoNZfmPE9Xg_x3JG31R5sWrIXIkp2sg7LcxyT7VnCO1xyQcbZTd_Izf8YDAo58zbzpHuBOzXkeOoaAE8fdC83_w"/>
+<img class="w-8 h-8 rounded-full border-2 border-primary" data-alt="Headshot of a senior risk manager with graying hair, wearing a navy blue suit. The lighting is crisp and professional, against a neutral studio background, conveying reliability and experience." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSOXSaknD0WH9-v5zflDSmAMvlkSPyp0PULADExAgwQGMKq53YLAQTzrA9yWLqKxN-UJ0MpPIAsNtabG9yAgo_UHP8oELk36irgWogpz0OPFsMTQnhw5wyn9tFonB9GTXeMCcwFhFNwS3p3_o1-ghW2t4QC_h-JttUK5Gw_ve1zHgsD6POq8XqBTxKvOu-G0oky8cIWobkoqA_XE_pWLn-N1hhrT99Nzpwn9Y-sBxDGnacw0wmI6ipDyglrnnSuy7FMTWQmh5Ng3nx"/>
+</div>
+<p class="text-body-sm text-primary-fixed/80 self-center">Trusted by 200+ Grid Operators</p>
+</div>
+</div>
+</div>
+<!-- Right Side: Login Form -->
+<div class="p-8 md:p-12 lg:p-16 flex flex-col justify-center bg-white">
+<div class="mb-10 block md:hidden text-center">
+<div class="inline-flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-primary text-[32px]" style="font-variation-settings: 'FILL' 1;">bolt</span>
+<span class="font-headline-md text-primary font-bold">PLN GridRisk</span>
+</div>
+</div>
+<div class="mb-8">
+<h2 class="font-display-lg text-on-surface mb-2">Selamat Datang</h2>
+<p class="font-body-lg text-outline">Silakan masuk untuk mengakses dasbor analitik Anda.</p>
+</div>
+<form class="space-y-6" id="loginForm">
+<!-- Username/Email -->
+<div class="space-y-2">
+<label class="font-label-caps text-on-surface-variant" for="email">Email atau Username</label>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-outline group-focus-within:text-primary transition-colors">
+<span class="material-symbols-outlined">person</span>
+</div>
+<input class="block w-full pl-12 pr-4 py-3.5 bg-surface-container-low border-0 rounded-xl font-body-lg text-on-surface ring-1 ring-inset ring-outline-variant focus:ring-2 focus:ring-primary focus:bg-white transition-all outline-none" id="email" name="email" placeholder="john.doe@pln.co.id" required="" type="text"/>
+</div>
+</div>
+<!-- Password -->
+<div class="space-y-2">
+<div class="flex justify-between items-center">
+<label class="font-label-caps text-on-surface-variant" for="password">Kata Sandi</label>
+<a class="text-body-sm font-semibold text-primary hover:text-on-secondary-container transition-colors" href="#">Lupa Kata Sandi?</a>
+</div>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-outline group-focus-within:text-primary transition-colors">
+<span class="material-symbols-outlined">lock</span>
+</div>
+<input class="block w-full pl-12 pr-12 py-3.5 bg-surface-container-low border-0 rounded-xl font-body-lg text-on-surface ring-1 ring-inset ring-outline-variant focus:ring-2 focus:ring-primary focus:bg-white transition-all outline-none" id="password" name="password" placeholder="••••••••••••" required="" type="password"/>
+<button class="absolute inset-y-0 right-0 pr-4 flex items-center text-outline hover:text-on-surface transition-colors" onclick="togglePassword()" type="button">
+<span class="material-symbols-outlined" id="passwordIcon">visibility</span>
+</button>
+</div>
+</div>
+<!-- Remember Me -->
+<div class="flex items-center">
+<input class="h-5 w-5 rounded border-outline-variant text-primary focus:ring-primary transition-colors cursor-pointer" id="remember-me" name="remember-me" type="checkbox"/>
+<label class="ml-3 block text-body-sm text-on-surface-variant cursor-pointer select-none" for="remember-me">
+                        Ingat Saya
+                    </label>
+</div>
+<!-- Submit Button -->
+<button class="w-full flex justify-center items-center gap-2 py-4 px-6 rounded-xl bg-primary text-white font-headline-md shadow-lg shadow-primary/20 hover:bg-on-primary-fixed-variant hover:-translate-y-0.5 transition-all active:translate-y-0" type="submit">
+                    Masuk
+                    <span class="material-symbols-outlined text-[20px]">login</span>
+</button>
+</form>
+<!-- Social/SSO Placeholder -->
+<div class="mt-8">
+<div class="relative">
+<div aria-hidden="true" class="absolute inset-0 flex items-center">
+<div class="w-full border-t border-outline-variant"></div>
+</div>
+<div class="relative flex justify-center text-body-sm">
+<span class="px-3 bg-white text-outline">Atau masuk melalui Portal Internal</span>
+</div>
+</div>
+<div class="mt-6">
+<button class="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl ring-1 ring-inset ring-outline-variant hover:bg-surface-container-low transition-all">
+<span class="material-symbols-outlined text-primary">corporate_fare</span>
+<span class="font-body-lg font-medium text-on-surface">PLN Corporate SSO</span>
+</button>
+</div>
+</div>
+<footer class="mt-12 text-center">
+<p class="text-body-sm text-outline">
+                    © 2024 PT PLN (Persero). <br class="sm:hidden"/> Semua Hak Dilindungi.
+                </p>
+</footer>
+</div>
+</main>
+<script>
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const passwordIcon = document.getElementById('passwordIcon');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                passwordIcon.innerText = 'visibility_off';
+            } else {
+                passwordInput.type = 'password';
+                passwordIcon.innerText = 'visibility';
+            }
+        }
+
+        // Lightweight atmospheric micro-interaction
+        document.addEventListener('mousemove', (e) => {
+            const { clientX, clientY } = e;
+            const moveX = (clientX - window.innerWidth / 2) * 0.01;
+            const moveY = (clientY - window.innerHeight / 2) * 0.01;
+            
+            const grid = document.querySelector('.bg-grid-pattern');
+            if(grid) {
+                grid.style.transform = `translate(${moveX}px, ${moveY}px)`;
+            }
+        });
+
+        // Form Submission visual feedback
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalContent = btn.innerHTML;
+            btn.innerHTML = '<span class="animate-spin material-symbols-outlined">progress_activity</span> Memproses...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                alert('Login Successful! Redirecting to Dashboard...');
+                btn.innerHTML = originalContent;
+                btn.disabled = false;
+            }, 1500);
+        });
+    </script>
+</body></html>

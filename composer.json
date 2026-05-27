@@ -1,0 +1,8 @@
+{
+    "name": "pln/gridisk",
+    "description": "PLN GridRisk KNN",
+    "type": "project",
+    "require": {
+        "phpoffice/phpspreadsheet": "^5.7"
+    }
+}
