@@ -46,9 +46,9 @@ function qStr(array $merge = []): string {
                    class="bg-transparent border-none focus:ring-0 text-sm w-full outline-none text-on-surface placeholder:text-outline"
                    placeholder="Cari penyulang..." type="text">
         </div>
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-3">
             <label class="text-xs text-outline font-medium">Tahun:</label>
-            <select name="tahun" class="text-sm border border-outline-variant rounded-lg px-3 py-1.5 bg-white text-on-surface focus:ring-1 focus:ring-primary outline-none">
+            <select name="tahun" class="text-sm border border-outline-variant rounded-lg pl-3 pr-8 py-1.5 bg-white text-on-surface focus:ring-1 focus:ring-primary outline-none w-24">
                 <?php foreach ($years as $y): ?>
                 <option value="<?= $y ?>" <?= $y == $tahun ? 'selected' : '' ?>><?= $y ?></option>
                 <?php endforeach; ?>

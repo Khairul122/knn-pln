@@ -16,7 +16,7 @@ class PemeliharaanController extends Controller
 
     public function index(): void
     {
-        $tahun  = (int) ($_GET['tahun']  ?? 2024);
+        $tahun  = (int) ($_GET['tahun']  ?? 2025);
         $search = trim($_GET['search'] ?? '');
         $page   = max(1, (int) ($_GET['page'] ?? 1));
         $offset = ($page - 1) * self::PER_PAGE;
@@ -24,7 +24,7 @@ class PemeliharaanController extends Controller
         $total  = $this->model->countAll($tahun, $search ?: null);
         $data   = $this->model->getAll($tahun, $search ?: null, self::PER_PAGE, $offset);
         $years  = $this->model->getAvailableYears();
-        if (!in_array(2024, $years)) $years[] = 2024;
+        if (!in_array(2025, $years)) $years[] = 2025;
         rsort($years);
 
         $this->view('pemeliharaan.index', [
@@ -127,7 +127,7 @@ class PemeliharaanController extends Controller
         return [
             'penyulang'                 => $this->input('penyulang', ''),
             'bulan'                     => $this->input('bulan', 1),
-            'tahun'                     => $this->input('tahun', 2024),
+            'tahun'                     => $this->input('tahun', 2025),
             'tier1_inpeksi'             => $this->input('tier1_inpeksi', 0),
             'tier1_temuan'              => $this->input('tier1_temuan', 0),
             'tier2_inpeksi'             => $this->input('tier2_inpeksi', 0),

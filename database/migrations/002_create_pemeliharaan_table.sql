@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS pemeliharaan (
     id                        INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
     penyulang                 VARCHAR(100) NOT NULL,
     bulan                     TINYINT UNSIGNED NOT NULL COMMENT '1=Jan ... 12=Des',
-    tahun                     YEAR NOT NULL DEFAULT 2024,
+    tahun                     YEAR NOT NULL DEFAULT 2025,
     tier1_inpeksi             INT UNSIGNED DEFAULT 0,
     tier1_temuan              INT UNSIGNED DEFAULT 0,
     tier2_inpeksi             INT UNSIGNED DEFAULT 0,

@@ -57,7 +57,7 @@ function knnQ(int $tahun, string $extra = ''): string {
     <form method="GET" action="<?= $baseUrl ?>/knn/train" class="flex items-center gap-3 mb-6">
         <label class="text-xs text-outline font-semibold">Tahun:</label>
         <select name="tahun" onchange="this.form.submit()"
-                class="text-sm border border-outline-variant rounded-lg px-3 py-1.5 bg-white text-on-surface focus:ring-1 focus:ring-primary outline-none">
+                class="text-sm border border-outline-variant rounded-lg pl-3 pr-8 py-1.5 bg-white text-on-surface focus:ring-1 focus:ring-primary outline-none w-28">
             <?php foreach ($years as $y): ?>
             <option value="<?= $y ?>" <?= $y == $tahun ? 'selected' : '' ?>><?= $y ?></option>
             <?php endforeach; ?>

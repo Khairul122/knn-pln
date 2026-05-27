@@ -18,11 +18,11 @@ class LaporanController extends Controller
 
     public function index(): void
     {
-        $tahun   = (int)($_GET['tahun']    ?? 2024);
+        $tahun   = (int)($_GET['tahun']    ?? 2025);
         $modelId = (int)($_GET['model_id'] ?? 0);
 
         $years = $this->model->getAvailableYears();
-        if (!in_array(2024, $years)) $years[] = 2024;
+        if (!in_array(2025, $years)) $years[] = 2025;
         rsort($years);
 
         // KNN models for this year (for selector)

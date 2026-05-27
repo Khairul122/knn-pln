@@ -55,7 +55,7 @@ $activeTab = isset($manualResult) && $manualResult ? 'manual' : (($hasBatch && $
         <label class="text-xs text-outline font-semibold">Model:</label>
         <form method="GET" action="<?= $baseUrl ?>/knn/predict" class="flex flex-wrap items-center gap-3 flex-1">
             <select name="model_id" onchange="this.form.submit()"
-                    class="text-sm border border-outline-variant rounded-lg px-3 py-1.5 bg-white text-on-surface focus:ring-1 focus:ring-primary outline-none flex-1 min-w-[260px]">
+                    class="text-sm border border-outline-variant rounded-lg pl-3 pr-10 py-1.5 bg-white text-on-surface focus:ring-1 focus:ring-primary outline-none flex-1 min-w-[260px]">
                 <option value="">-- Pilih Model --</option>
                 <?php foreach ($history as $m):
                     $acc = $m['accuracy'] !== null ? ' · Akurasi: '.round($m['accuracy']*100,1).'%' : '';
@@ -66,7 +66,7 @@ $activeTab = isset($manualResult) && $manualResult ? 'manual' : (($hasBatch && $
                 <?php endforeach; ?>
             </select>
             <select name="tahun" onchange="this.form.submit()"
-                    class="text-sm border border-outline-variant rounded-lg px-3 py-1.5 bg-white text-on-surface focus:ring-1 focus:ring-primary outline-none">
+                    class="text-sm border border-outline-variant rounded-lg pl-3 pr-8 py-1.5 bg-white text-on-surface focus:ring-1 focus:ring-primary outline-none w-28">
                 <?php foreach ($years as $y): ?>
                 <option value="<?= $y ?>" <?= $y==$tahun?'selected':'' ?>><?= $y ?></option>
                 <?php endforeach; ?>

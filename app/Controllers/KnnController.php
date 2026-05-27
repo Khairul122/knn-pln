@@ -23,7 +23,7 @@ class KnnController extends Controller
     // GET /knn/train
     public function trainForm(): void
     {
-        $tahun      = (int)($_GET['tahun'] ?? 2024);
+        $tahun      = (int)($_GET['tahun'] ?? 2025);
         $years      = $this->getYears();
         $splitStats = $this->labelModel->getSplitStats($tahun);
         $hasSplit   = $this->labelModel->hasSplit($tahun);
@@ -40,7 +40,7 @@ class KnnController extends Controller
     // POST /knn/train
     public function train(): void
     {
-        $tahun  = (int) $this->input('tahun', 2024);
+        $tahun  = (int) $this->input('tahun', 2025);
         $k      = max(1, min(20, (int) $this->input('k_value', 5)));
         $metric = in_array($this->input('distance_metric'), ['euclidean', 'manhattan'])
                   ? $this->input('distance_metric') : 'euclidean';
@@ -99,7 +99,7 @@ class KnnController extends Controller
     // GET /knn/evaluate
     public function evaluate(): void
     {
-        $tahun   = (int)($_GET['tahun'] ?? 2024);
+        $tahun   = (int)($_GET['tahun'] ?? 2025);
         $modelId = (int)($_GET['model_id'] ?? 0);
         $years   = $this->getYears();
         $history = $this->knnModel->getAll($tahun);
@@ -136,7 +136,7 @@ class KnnController extends Controller
     // GET /knn/predict
     public function predictForm(): void
     {
-        $tahun   = (int)($_GET['tahun'] ?? 2024);
+        $tahun   = (int)($_GET['tahun'] ?? 2025);
         $modelId = (int)($_GET['model_id'] ?? 0);
         $years   = $this->getYears();
         $history = $this->knnModel->getAll($tahun);
@@ -165,7 +165,7 @@ class KnnController extends Controller
     public function predictManual(): void
     {
         $modelId  = (int) $this->input('model_id', 0);
-        $tahun    = (int) $this->input('tahun', 2024);
+        $tahun    = (int) $this->input('tahun', 2025);
         $years    = $this->getYears();
         $history  = $this->knnModel->getAll($tahun);
         $selected = $this->knnModel->findById($modelId) ?: (!empty($history) ? $history[0] : null);
@@ -204,7 +204,7 @@ class KnnController extends Controller
 
         if (!$selected || empty($selected['model_path']) || !file_exists($selected['model_path'])) {
             Flash::set('error', 'Model tidak ditemukan. Latih model terlebih dahulu.');
-            $this->redirect('/knn/predict?tahun=' . $this->input('tahun', 2024));
+            $this->redirect('/knn/predict?tahun=' . $this->input('tahun', 2025));
         }
 
         $clf        = KNNClassifier::load($selected['model_path']);
@@ -238,7 +238,7 @@ class KnnController extends Controller
             $this->knnModel->delete((int) $id);
             Flash::set('success', 'Model KNN berhasil dihapus.');
         }
-        $this->redirect('/knn/train?tahun=' . ($rec['tahun'] ?? 2024));
+        $this->redirect('/knn/train?tahun=' . ($rec['tahun'] ?? 2025));
     }
 
     // ── private ───────────────────────────────────────────────────────────────
@@ -255,7 +255,7 @@ class KnnController extends Controller
     private function getYears(): array
     {
         $years = $this->pemModel->getAvailableYears();
-        if (!in_array(2024, $years)) $years[] = 2024;
+        if (!in_array(2025, $years)) $years[] = 2025;
         rsort($years);
         return $years;
     }

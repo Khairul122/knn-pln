@@ -121,17 +121,17 @@ $riskDot = ['Rendah'=>'bg-green-500','Sedang'=>'bg-amber-500','Tinggi'=>'bg-red-
                    class="bg-transparent border-none focus:ring-0 text-sm w-full outline-none text-on-surface placeholder:text-outline"
                    placeholder="Cari penyulang..." type="text">
         </div>
-        <select name="tahun" class="text-sm border border-outline-variant rounded-lg px-3 py-1.5 bg-white text-on-surface focus:ring-1 focus:ring-primary outline-none">
+        <select name="tahun" class="text-sm border border-outline-variant rounded-lg pl-3 pr-8 py-1.5 bg-white text-on-surface focus:ring-1 focus:ring-primary outline-none w-28">
             <?php foreach ($years as $y): ?>
             <option value="<?= $y ?>" <?= $y == $tahun ? 'selected' : '' ?>><?= $y ?></option>
             <?php endforeach; ?>
         </select>
-        <select name="status" class="text-sm border border-outline-variant rounded-lg px-3 py-1.5 bg-white text-on-surface focus:ring-1 focus:ring-primary outline-none">
+        <select name="status" class="text-sm border border-outline-variant rounded-lg pl-3 pr-8 py-1.5 bg-white text-on-surface focus:ring-1 focus:ring-primary outline-none w-40">
             <option value="" <?= $status==='' ? 'selected':'' ?>>Semua Status</option>
             <option value="labeled"   <?= $status==='labeled'   ? 'selected':'' ?>>Sudah Berlabel</option>
             <option value="unlabeled" <?= $status==='unlabeled' ? 'selected':'' ?>>Belum Berlabel</option>
         </select>
-        <select name="label" class="text-sm border border-outline-variant rounded-lg px-3 py-1.5 bg-white text-on-surface focus:ring-1 focus:ring-primary outline-none">
+        <select name="label" class="text-sm border border-outline-variant rounded-lg pl-3 pr-8 py-1.5 bg-white text-on-surface focus:ring-1 focus:ring-primary outline-none w-40">
             <option value="" <?= $label==='' ? 'selected':'' ?>>Semua Risiko</option>
             <option value="Rendah" <?= $label==='Rendah' ? 'selected':'' ?>>Risiko Rendah</option>
             <option value="Sedang" <?= $label==='Sedang' ? 'selected':'' ?>>Risiko Sedang</option>

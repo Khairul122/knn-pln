@@ -71,7 +71,7 @@ for ($b = 1; $b <= 12; $b++) {
         <form method="GET" action="<?= $baseUrl ?>/laporan" class="flex flex-wrap items-center gap-3 flex-1">
             <label class="text-xs text-outline font-semibold">Tahun:</label>
             <select name="tahun" onchange="this.form.submit()"
-                    class="text-sm border border-outline-variant rounded-lg px-3 py-1.5 bg-white text-on-surface focus:ring-1 focus:ring-primary outline-none">
+                    class="text-sm border border-outline-variant rounded-lg pl-3 pr-8 py-1.5 bg-white text-on-surface focus:ring-1 focus:ring-primary outline-none w-28">
                 <?php foreach ($years as $y): ?>
                 <option value="<?= $y ?>" <?= $y==$tahun?'selected':'' ?>><?= $y ?></option>
                 <?php endforeach; ?>
@@ -80,7 +80,7 @@ for ($b = 1; $b <= 12; $b++) {
             <?php if (!empty($knnHistory)): ?>
             <label class="text-xs text-outline font-semibold">Model KNN:</label>
             <select name="model_id" onchange="this.form.submit()"
-                    class="text-sm border border-outline-variant rounded-lg px-3 py-1.5 bg-white text-on-surface focus:ring-1 focus:ring-primary outline-none min-w-[220px]">
+                    class="text-sm border border-outline-variant rounded-lg pl-3 pr-10 py-1.5 bg-white text-on-surface focus:ring-1 focus:ring-primary outline-none min-w-[220px] w-64">
                 <option value="">Tanpa prediksi KNN</option>
                 <?php foreach ($knnHistory as $m):
                     $acc = $m['accuracy'] !== null ? ' · '.round($m['accuracy']*100,1).'%' : '';

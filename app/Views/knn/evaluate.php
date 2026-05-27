@@ -60,7 +60,7 @@ $riskColor = ['Rendah' => '#22c55e', 'Sedang' => '#f59e0b', 'Tinggi' => '#ef4444
         <form method="GET" action="<?= $baseUrl ?>/knn/evaluate" class="flex flex-wrap items-center gap-3 flex-1">
             <label class="text-xs text-outline font-semibold whitespace-nowrap">Pilih Model:</label>
             <select name="model_id" onchange="this.form.submit()"
-                    class="text-sm border border-outline-variant rounded-lg px-3 py-1.5 bg-white text-on-surface focus:ring-1 focus:ring-primary outline-none flex-1 min-w-[260px]">
+                    class="text-sm border border-outline-variant rounded-lg pl-3 pr-10 py-1.5 bg-white text-on-surface focus:ring-1 focus:ring-primary outline-none flex-1 min-w-[260px]">
                 <option value="">-- Pilih Model --</option>
                 <?php foreach ($history as $m):
                     $accTxt = $m['accuracy'] !== null ? ' · Akurasi '.round($m['accuracy']*100,1).'%' : '';
@@ -72,7 +72,7 @@ $riskColor = ['Rendah' => '#22c55e', 'Sedang' => '#f59e0b', 'Tinggi' => '#ef4444
             </select>
             <input type="hidden" name="tahun" value="<?= $tahun ?>">
             <select name="tahun" onchange="this.form.submit()"
-                    class="text-sm border border-outline-variant rounded-lg px-3 py-1.5 bg-white text-on-surface focus:ring-1 focus:ring-primary outline-none">
+                    class="text-sm border border-outline-variant rounded-lg pl-3 pr-8 py-1.5 bg-white text-on-surface focus:ring-1 focus:ring-primary outline-none w-28">
                 <?php foreach ($years as $y): ?>
                 <option value="<?= $y ?>" <?= $y == $tahun ? 'selected' : '' ?>><?= $y ?></option>
                 <?php endforeach; ?>

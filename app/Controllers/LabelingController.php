@@ -19,7 +19,7 @@ class LabelingController extends Controller
 
     public function index(): void
     {
-        $tahun  = (int) ($_GET['tahun']  ?? 2024);
+        $tahun  = (int) ($_GET['tahun']  ?? 2025);
         $search = trim($_GET['search']   ?? '');
         $status = $_GET['status']        ?? '';   // labeled | unlabeled | ''
         $label  = $_GET['label']         ?? '';   // Low | Medium | High | ''
@@ -31,7 +31,7 @@ class LabelingController extends Controller
         $summary = $this->model->getSummary($tahun);
 
         $years      = $this->pemModel->getAvailableYears();
-        if (!in_array(2024, $years)) $years[] = 2024;
+        if (!in_array(2025, $years)) $years[] = 2025;
         rsort($years);
 
         $totalPages = (int) ceil($total / self::PER_PAGE);
@@ -125,9 +125,9 @@ class LabelingController extends Controller
 
     public function splitForm(): void
     {
-        $tahun  = (int) ($_GET['tahun'] ?? 2024);
+        $tahun  = (int) ($_GET['tahun'] ?? 2025);
         $years  = $this->pemModel->getAvailableYears();
-        if (!in_array(2024, $years)) $years[] = 2024;
+        if (!in_array(2025, $years)) $years[] = 2025;
         rsort($years);
 
         $stats   = $this->model->getSplitStats($tahun);
@@ -139,7 +139,7 @@ class LabelingController extends Controller
 
     public function executeSplit(): void
     {
-        $tahun = (int) $this->input('tahun', 2024);
+        $tahun = (int) $this->input('tahun', 2025);
         $ratio = (float) $this->input('train_ratio', 0.8);
         $ratio = max(0.5, min(0.9, $ratio));
 
@@ -152,7 +152,7 @@ class LabelingController extends Controller
 
     public function resetSplitData(): void
     {
-        $tahun = (int) $this->input('tahun', 2024);
+        $tahun = (int) $this->input('tahun', 2025);
         $this->model->resetSplit($tahun);
         Flash::set('success', 'Split data berhasil direset. Semua data kembali unassigned.');
         $this->redirect('/labeling/split?tahun=' . $tahun);
@@ -160,7 +160,7 @@ class LabelingController extends Controller
 
     public function autoLabel(): void
     {
-        $tahun     = (int) $this->input('tahun', 2024);
+        $tahun     = (int) $this->input('tahun', 2025);
         $overwrite = $this->input('overwrite', '0') === '1';
         $userId    = (int) $_SESSION['user_id'];
 

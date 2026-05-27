@@ -149,4 +149,38 @@ class Laporan extends Model
         $stmt->execute([$tahun]);
         return (int) $stmt->fetchColumn();
     }
+
+    public function getTopHighRisk(int $tahun, int $limit = 8): array
+    {
+        $stmt = $this->db->prepare("
+            SELECT p.penyulang, p.bulan,
+                   l.rpn, l.severity, l.occurrence, l.detection,
+                   l.risk_label, l.failure_mode
+            FROM labeling l
+            JOIN pemeliharaan p ON p.id = l.pemeliharaan_id
+            WHERE p.tahun = ?
+            ORDER BY l.rpn DESC
+            LIMIT ?
+        ");
+        $stmt->execute([$tahun, $limit]);
+        return $stmt->fetchAll();
+    }
+
+    public function getRecentActivity(int $tahun): array
+    {
+        $stmt = $this->db->prepare("
+            SELECT
+                (SELECT MAX(created_at) FROM pemeliharaan WHERE tahun = ?)            AS last_import,
+                (SELECT MAX(l.updated_at) FROM labeling l
+                 JOIN pemeliharaan p ON p.id = l.pemeliharaan_id
+                 WHERE p.tahun = ?)                                                    AS last_labeled,
+                (SELECT COUNT(*) FROM labeling l
+                 JOIN pemeliharaan p ON p.id = l.pemeliharaan_id
+                 WHERE p.tahun = ? AND l.split_type IS NOT NULL)                       AS split_count,
+                (SELECT COUNT(*) FROM knn_models WHERE tahun = ?)                      AS model_count,
+                (SELECT MAX(trained_at) FROM knn_models WHERE tahun = ?)               AS last_trained
+        ");
+        $stmt->execute([$tahun, $tahun, $tahun, $tahun, $tahun]);
+        return $stmt->fetch() ?: [];
+    }
 }

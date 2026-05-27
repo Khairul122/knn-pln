@@ -72,8 +72,8 @@ $numericFields = [
                         <div class="space-y-1">
                             <label class="text-xs font-semibold text-outline uppercase tracking-wider">Tahun <span class="text-error">*</span></label>
                             <select name="tahun" required class="block w-full px-4 py-2.5 bg-surface-container-low border-0 rounded-xl text-sm text-on-surface ring-1 ring-inset ring-outline-variant focus:ring-2 focus:ring-primary outline-none">
-                                <?php foreach ([2024, 2025, 2026] as $y): ?>
-                                <option value="<?= $y ?>" <?= ($record['tahun'] ?? 2024) == $y ? 'selected' : '' ?>><?= $y ?></option>
+                                <?php foreach ([2025, 2026, 2027] as $y): ?>
+                                <option value="<?= $y ?>" <?= ($record['tahun'] ?? 2025) == $y ? 'selected' : '' ?>><?= $y ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
