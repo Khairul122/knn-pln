@@ -76,10 +76,11 @@ if (($userRole ?? '') === 'admin') {
                 <p class="text-sm font-semibold truncate text-on-surface"><?= $userName ?></p>
                 <p class="text-[11px] text-outline truncate"><?= $userEmail ?></p>
             </div>
-            <a href="<?= $baseUrl ?>/logout" title="Logout"
-               class="p-1.5 rounded-lg text-outline hover:text-error hover:bg-error-container transition-colors flex-shrink-0">
+            <button type="button" onclick="confirmLogout()" title="Logout"
+                    class="p-1.5 rounded-lg text-outline hover:text-error hover:bg-error-container transition-colors flex-shrink-0">
                 <span class="material-symbols-outlined text-[20px]">logout</span>
-            </a>
+            </button>
+            <form id="logoutForm" method="GET" action="<?= $baseUrl ?>/logout" class="hidden"></form>
         </div>
     </div>
 </aside>

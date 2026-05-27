@@ -262,7 +262,8 @@ function knnQ(int $tahun, string $extra = ''): string {
                                             <span class="material-symbols-outlined text-[16px]">scatter_plot</span>
                                         </a>
                                         <form method="POST" action="<?= $baseUrl ?>/knn/delete/<?= $m['id'] ?>"
-                                              onsubmit="return confirm('Hapus model ini?')">
+                                              data-confirm="Hapus model KNN ini? File model akan dihapus permanen."
+                                              data-confirm-title="Hapus Model KNN" data-confirm-type="danger" data-confirm-ok="Hapus">
                                             <input type="hidden" name="tahun" value="<?= $tahun ?>">
                                             <button class="p-1.5 rounded-lg text-error hover:bg-error-container transition-colors" title="Hapus">
                                                 <span class="material-symbols-outlined text-[16px]">delete</span>
@@ -299,12 +300,20 @@ document.querySelectorAll('.metric-btn').forEach(btn => {
 });
 
 function confirmTrain() {
-    const k       = document.getElementById('kSlider').value;
-    const metric  = document.querySelector('input[name=distance_metric]:checked')?.value ?? 'euclidean';
-    const feats   = [...document.querySelectorAll('input[name="features[]"]:checked')].map(c => c.value);
-    if (feats.length === 0) { alert('Pilih minimal satu fitur.'); return; }
-    const msg = `Latih model KNN dengan konfigurasi:\n• K = ${k}\n• Metrik: ${metric}\n• Fitur: ${feats.join(', ')}\n\nLanjutkan?`;
-    if (confirm(msg)) document.getElementById('trainForm').submit();
+    const k      = document.getElementById('kSlider').value;
+    const metric = document.querySelector('input[name=distance_metric]:checked')?.value ?? 'euclidean';
+    const feats  = [...document.querySelectorAll('input[name="features[]"]:checked')].map(c => c.value);
+    if (feats.length === 0) {
+        showAlert('Pilih minimal satu fitur sebelum melatih model.', 'Fitur Belum Dipilih');
+        return;
+    }
+    showDialog({
+        title:       'Latih Model KNN',
+        message:     `Konfigurasi training:\n• K = ${k}\n• Metrik: ${metric}\n• Fitur: ${feats.join(', ')}`,
+        type:        'info',
+        confirmText: 'Mulai Training',
+        onConfirm:   () => document.getElementById('trainForm').submit(),
+    });
 }
 </script>
 </body>

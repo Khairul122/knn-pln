@@ -264,7 +264,8 @@ $activeTab = isset($manualResult) && $manualResult ? 'manual' : (($hasBatch && $
                 <p class="text-xs text-outline mt-0.5">Jalankan KNN pada seluruh data berlabel tahun <?= $tahun ?> menggunakan model terpilih.</p>
             </div>
             <form method="POST" action="<?= $baseUrl ?>/knn/predict/batch"
-                  onsubmit="return confirm('Jalankan prediksi batch untuk semua data berlabel tahun <?= $tahun ?>?\n\nProses ini akan menggantikan hasil prediksi batch sebelumnya.')">
+                  data-confirm="Jalankan prediksi KNN pada seluruh data berlabel tahun <?= $tahun ?>. Hasil prediksi batch sebelumnya akan digantikan."
+                  data-confirm-title="Prediksi Batch" data-confirm-type="warning" data-confirm-ok="Jalankan">
                 <input type="hidden" name="model_id" value="<?= $selected['id'] ?>">
                 <input type="hidden" name="tahun"    value="<?= $tahun ?>">
                 <button type="submit"

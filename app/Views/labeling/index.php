@@ -224,7 +224,8 @@ $riskDot = ['Rendah'=>'bg-green-500','Sedang'=>'bg-amber-500','Tinggi'=>'bg-red-
                                     <span class="material-symbols-outlined text-[18px]">edit</span>
                                 </a>
                                 <form method="POST" action="<?= $baseUrl ?>/labeling/delete/<?= $row['label_id'] ?>"
-                                      onsubmit="return confirm('Hapus label FMEA ini?')">
+                                      data-confirm="Hapus label FMEA ini? Tindakan tidak dapat dibatalkan."
+                                      data-confirm-title="Hapus Label" data-confirm-type="danger" data-confirm-ok="Hapus">
                                     <button class="p-1.5 rounded-lg text-error hover:bg-error-container transition-colors" title="Hapus">
                                         <span class="material-symbols-outlined text-[18px]">delete</span>
                                     </button>
@@ -278,9 +279,15 @@ $riskDot = ['Rendah'=>'bg-green-500','Sedang'=>'bg-amber-500','Tinggi'=>'bg-red-
 function confirmAutoLabel() {
     const overwrite = document.getElementById('overwriteCheck').checked;
     const msg = overwrite
-        ? 'Seluruh <?= $total ?> data akan dilabeli ulang (menimpa label yang sudah ada).\n\nLanjutkan?'
-        : 'Label FMEA akan dihitung otomatis untuk seluruh data yang BELUM berlabel.\n\nLanjutkan?';
-    if (confirm(msg)) document.getElementById('autoLabelForm').submit();
+        ? 'Seluruh <?= $total ?> data akan dilabeli ulang, menimpa label yang sudah ada.'
+        : 'Label FMEA akan dihitung otomatis untuk seluruh data yang belum berlabel.';
+    showDialog({
+        title:       overwrite ? 'Timpa Semua Label' : 'Label Otomatis',
+        message:     msg,
+        type:        overwrite ? 'warning' : 'info',
+        confirmText: 'Ya, Lanjutkan',
+        onConfirm:   () => document.getElementById('autoLabelForm').submit(),
+    });
 }
 </script>
 </body>

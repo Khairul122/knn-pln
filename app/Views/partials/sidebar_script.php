@@ -9,4 +9,14 @@ function closeSidebar() {
     document.getElementById('sidebar-overlay').classList.add('hidden');
     document.body.style.overflow = '';
 }
+function confirmLogout() {
+    showDialog({
+        title:       'Keluar dari Aplikasi',
+        message:     'Anda akan keluar dari sesi ini. Pastikan semua pekerjaan sudah tersimpan.',
+        type:        'warning',
+        confirmText: 'Ya, Keluar',
+        cancelText:  'Batal',
+        onConfirm:   () => document.getElementById('logoutForm').submit(),
+    });
+}
 </script>

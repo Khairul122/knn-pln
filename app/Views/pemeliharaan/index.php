@@ -112,7 +112,9 @@ function qStr(array $merge = []): string {
                                    class="p-1.5 rounded-lg text-primary hover:bg-primary-fixed transition-colors" title="Edit">
                                     <span class="material-symbols-outlined text-[18px]">edit</span>
                                 </a>
-                                <form method="POST" action="<?= $baseUrl ?>/pemeliharaan/delete/<?= $row['id'] ?>" onsubmit="return confirm('Hapus data ini?')">
+                                <form method="POST" action="<?= $baseUrl ?>/pemeliharaan/delete/<?= $row['id'] ?>"
+                                      data-confirm="Hapus data pemeliharaan ini? Tindakan tidak dapat dibatalkan."
+                                      data-confirm-title="Hapus Data" data-confirm-type="danger" data-confirm-ok="Hapus">
                                     <button type="submit" class="p-1.5 rounded-lg text-error hover:bg-error-container transition-colors" title="Hapus">
                                         <span class="material-symbols-outlined text-[18px]">delete</span>
                                     </button>

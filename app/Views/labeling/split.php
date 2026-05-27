@@ -132,7 +132,8 @@ $riskCls = [
                 <p class="text-xs font-semibold text-error mb-1">Reset Split</p>
                 <p class="text-xs text-on-surface-variant mb-3">Hapus penandaan train/test dari seluruh data tahun <?= $tahun ?>.</p>
                 <form method="POST" action="<?= $baseUrl ?>/labeling/split/reset"
-                      onsubmit="return confirm('Reset split data tahun <?= $tahun ?>?\nSemua penandaan train/test akan dihapus.')">
+                      data-confirm="Reset split data tahun <?= $tahun ?>? Semua penandaan train/test akan dihapus."
+                      data-confirm-title="Reset Split" data-confirm-type="danger" data-confirm-ok="Reset">
                     <input type="hidden" name="tahun" value="<?= $tahun ?>">
                     <button type="submit" class="flex items-center gap-1.5 px-3 py-2 bg-error text-white rounded-lg text-xs font-semibold hover:opacity-90 transition-opacity">
                         <span class="material-symbols-outlined text-[16px]">restart_alt</span>
@@ -289,11 +290,16 @@ function confirmSplit() {
     const tr    = Math.round(<?= $labeled ?> * ratio);
     const te    = <?= $labeled ?> - tr;
     const pct   = Math.round(ratio * 100) + '/' + Math.round((1 - ratio) * 100);
-    const msg   = `Terapkan stratified split ${pct}% untuk ${<?= $labeled ?>} data berlabel?\n\n` +
-                  `• Train: ${tr} data\n• Test:  ${te} data\n\n` +
-                  <?= $hasSplit ? '"⚠️ Split sebelumnya akan ditimpa.\n\n"' : '""' ?> +
-                  'Lanjutkan?';
-    if (confirm(msg)) document.getElementById('splitForm').submit();
+    const extra = <?= $hasSplit ? '"⚠️ Split sebelumnya akan ditimpa."' : '""' ?>;
+    const msg   = `Terapkan stratified split ${pct}% untuk <?= $labeled ?> data berlabel:\n• Train: ${tr} data\n• Test: ${te} data` +
+                  (extra ? '\n\n' + extra : '');
+    showDialog({
+        title:       'Terapkan Split Data',
+        message:     msg,
+        type:        <?= $hasSplit ? "'warning'" : "'info'" ?>,
+        confirmText: 'Terapkan Split',
+        onConfirm:   () => document.getElementById('splitForm').submit(),
+    });
 }
 </script>
 </body>

@@ -59,4 +59,9 @@ $pageHeadTitle ??= 'PLN GridRisk';
     .toast-leave { animation: toast-out .25s ease forwards; }
     .progress-bar { animation: progress-shrink linear forwards; }
     @keyframes progress-shrink { from { width: 100%; } to { width: 0%; } }
+    /* Dialog */
+    @keyframes dlg-in  { from { opacity:0; transform:scale(.95) translateY(8px); } to { opacity:1; transform:scale(1) translateY(0); } }
+    @keyframes dlg-out { from { opacity:1; transform:scale(1)  translateY(0); }    to { opacity:0; transform:scale(.95) translateY(8px); } }
+    .dlg-enter { animation: dlg-in  .2s cubic-bezier(.22,1,.36,1) forwards; }
+    .dlg-leave { animation: dlg-out .15s ease forwards; }
 </style>
