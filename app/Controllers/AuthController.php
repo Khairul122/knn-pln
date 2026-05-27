@@ -56,7 +56,10 @@ class AuthController extends Controller
 
     public function logout(): void
     {
+        $flash = ['type' => 'success', 'message' => 'Anda berhasil keluar dari aplikasi.'];
         session_destroy();
+        session_start();
+        $_SESSION['flash'] = $flash;
         $this->redirect('/login');
     }
 }
