@@ -277,6 +277,7 @@ mkdir -p storage/models storage/uploads
 | GET    | `/labeling/edit/{id}`       | `LabelingController@edit`            | Auth     |
 | POST   | `/labeling/edit/{id}`       | `LabelingController@update`          | Auth     |
 | POST   | `/labeling/delete/{id}`     | `LabelingController@delete`          | Auth     |
+| POST   | `/labeling/delete-all`      | `LabelingController@deleteAll`       | Auth     |
 | POST   | `/labeling/auto-label`      | `LabelingController@autoLabel`       | Auth     |
 | GET    | `/labeling/split`           | `LabelingController@splitForm`       | Auth     |
 | POST   | `/labeling/split`           | `LabelingController@executeSplit`    | Auth     |
@@ -287,6 +288,7 @@ mkdir -p storage/models storage/uploads
 | GET    | `/knn/predict`              | `KnnController@predictForm`          | Auth     |
 | POST   | `/knn/predict`              | `KnnController@predictManual`        | Auth     |
 | POST   | `/knn/predict/batch`        | `KnnController@predictBatch`         | Auth     |
+| POST   | `/knn/predict/clear`        | `KnnController@clearPredictionsBatch`| Auth     |
 | POST   | `/knn/delete/{id}`          | `KnnController@deleteModel`          | Auth     |
 | GET    | `/laporan`                  | `LaporanController@index`            | Auth     |
 
@@ -335,12 +337,15 @@ RPN = Severity × Occurrence × Detection
 
 | RPN         | Label  |
 |-------------|--------|
-| 1 – 125     | Rendah |
-| 126 – 512   | Sedang |
-| 513 – 1000  | Tinggi |
+| 1 – 9       | Rendah |
+| 10 – 99     | Sedang |
+| 100 – 1000  | Tinggi |
 
 - **Manual:** isi form Severity/Occurrence/Detection, RPN dihitung otomatis.
 - **Auto-label:** tombol batch yang menghitung RPN dari data yang sudah ada dan mengisi label otomatis berdasarkan threshold di atas.
+  - **Severity (S):** Ditentukan berdasarkan hierarki keparahan jenis komponen pemeliharaan (grounding/trafo=9, temuan tier 2=7, beban=6, FCO=5, temuan tier 1=4, penghalang panjat=3, pengukuran/inspeksi=2, tidak ada gangguan=1).
+  - **Occurrence (O):** Ditentukan dari total temuan inspeksi per bulan (temuan=0 $\rightarrow$ O=1, 1-10 $\rightarrow$ O=4, 11-20 $\rightarrow$ O=7, >20 $\rightarrow$ O=9).
+  - **Detection (D):** Ditentukan dari ketersediaan realisasi inspeksi bulanan (kedua inspeksi ada $\rightarrow$ D=2, salah satu $\rightarrow$ D=5, tidak ada $\rightarrow$ D=9).
 - Setiap pemeliharaan maksimal punya **1 label** (UNIQUE constraint pada `pemeliharaan_id`).
 
 ---
@@ -515,11 +520,11 @@ Router tidak me-require semua controller di awal. Setiap controller di-require h
 
 | RPN         | Label  |
 |-------------|--------|
-| 1 – 125     | Rendah |
-| 126 – 512   | Sedang |
-| 513 – 1000  | Tinggi |
+| 1 – 9       | Rendah |
+| 10 – 99     | Sedang |
+| 100 – 1000  | Tinggi |
 
-Batas ini di-hardcode di `LabelingController::autoLabel()`. Jika perlu diubah, edit method tersebut.
+Batas ini di-hardcode di `LabelingController::computeFmea()`. Jika perlu diubah, edit method tersebut.
 
 ### Flash Messages
 
