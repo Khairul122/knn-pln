@@ -17,9 +17,6 @@ $navItems = [
     ['key' => 'knn',          'href' => $baseUrl . '/knn/train',   'icon' => 'model_training', 'label' => 'Prediksi KNN'],
     ['key' => 'laporan',      'href' => $baseUrl . '/laporan',     'icon' => 'report_problem', 'label' => 'Laporan Risiko'],
 ];
-if (($userRole ?? '') === 'admin') {
-    $navItems[] = ['key' => 'pengaturan', 'href' => '#', 'icon' => 'settings', 'label' => 'Pengaturan'];
-}
 ?>
 <!-- Sidebar overlay (mobile) -->
 <div id="sidebar-overlay"

@@ -123,6 +123,14 @@ class LabelingController extends Controller
         $this->redirect('/labeling?tahun=' . $record['tahun']);
     }
 
+    public function deleteAll(): void
+    {
+        $tahun = (int) $this->input('tahun', 2025);
+        $this->model->deleteAll($tahun);
+        Flash::set('success', 'Seluruh label FMEA tahun ' . $tahun . ' berhasil dihapus.');
+        $this->redirect('/labeling?tahun=' . $tahun);
+    }
+
     public function splitForm(): void
     {
         $tahun  = (int) ($_GET['tahun'] ?? 2025);
@@ -216,7 +224,7 @@ class LabelingController extends Controller
         $d   = max(1, min(10, (int) $this->input('detection',  1)));
         $rpn = $s * $o * $d;
 
-        $label = $rpn <= 100 ? 'Rendah' : ($rpn <= 200 ? 'Sedang' : 'Tinggi');
+        $label = $rpn <= 9 ? 'Rendah' : ($rpn <= 99 ? 'Sedang' : 'Tinggi');
         $override = $this->input('risk_label_override', '');
         if (in_array($override, ['Rendah','Sedang','Tinggi'])) $label = $override;
 
@@ -258,49 +266,42 @@ class LabelingController extends Controller
         $gnd  = (int)$p['perbaikan_grounding_trafo'];
         $pjt  = (int)$p['penghalang_panjat'];
 
-        $totalKerusakan = $t1t + $t2t + $fco + $gnd + $pjt;
-        $totalAktivitas = $t1i + $t1t + $t2i + $t2t + $ukur + $fco + $beban + $gnd + $pjt;
-        $totalInspeksi  = $t1i + $t2i + $ukur;
+        // Severity (S) berdasarkan catatan baru
+        $s = 1; // Default: Tidak ada indikasi gangguan
+        if ($gnd > 0) {
+            $s = 9; // Komponen utama gardu, dampak signifikan
+        } elseif ($t2t > 0) {
+            $s = 7; // Gangguan meluas ke beberapa pelanggan
+        } elseif ($beban > 0) {
+            $s = 6; // Gangguan distribusi beban, area terbatas
+        } elseif ($fco > 0) {
+            $s = 5; // Komponen proteksi, dampak lokal
+        } elseif ($t1t > 0) {
+            $s = 4; // Deteksi dini, belum ada kerusakan nyata
+        } elseif ($pjt > 0) {
+            $s = 3; // Komponen penunjang, bukan komponen utama
+        } elseif ($ukur > 0 || $t1i > 0 || $t2i > 0) {
+            $s = 2; // Perlindungan ringan, dampak minimal
+        }
 
-        // Severity (1-10) — kerusakan / temuan
-        $s = match(true) {
-            $totalKerusakan === 0 => 1,
-            $totalKerusakan === 1 => 3,
-            $totalKerusakan === 2 => 4,
-            $totalKerusakan === 3 => 5,
-            $totalKerusakan === 4 => 6,
-            $totalKerusakan === 5 => 7,
-            $totalKerusakan === 6 => 8,
-            $totalKerusakan <= 8  => 9,
-            default               => 10,
-        };
-
-        // Occurrence (1-10) — total workload
+        // Occurrence (O) berdasarkan catatan baru
+        $totalTemuan = $t1t + $t2t;
         $o = match(true) {
-            $totalAktivitas === 0  => 1,
-            $totalAktivitas <= 2   => 2,
-            $totalAktivitas <= 5   => 3,
-            $totalAktivitas <= 8   => 5,
-            $totalAktivitas <= 12  => 6,
-            $totalAktivitas <= 16  => 7,
-            $totalAktivitas <= 20  => 8,
-            $totalAktivitas <= 25  => 9,
-            default                => 10,
+            $totalTemuan === 0 => 1,
+            $totalTemuan <= 10  => 4,
+            $totalTemuan <= 20  => 7,
+            default             => 9,
         };
 
-        // Detection (1-10) — inversely proportional to inspections
+        // Detection (D) berdasarkan catatan baru
         $d = match(true) {
-            $totalInspeksi === 0 => 8,
-            $totalInspeksi === 1 => 6,
-            $totalInspeksi === 2 => 5,
-            $totalInspeksi === 3 => 4,
-            $totalInspeksi <= 5  => 3,
-            $totalInspeksi <= 8  => 2,
-            default              => 1,
+            $t1i > 0 && $t2i > 0 => 2, // Ada realisasi Tier 1 dan Tier 2
+            $t1i > 0 || $t2i > 0 => 5, // Hanya ada Tier 1 atau Tier 2 saja
+            default              => 9, // Deteksi sangat buruk (tidak ada inspeksi)
         };
 
         $rpn   = $s * $o * $d;
-        $label = $rpn <= 100 ? 'Rendah' : ($rpn <= 200 ? 'Sedang' : 'Tinggi');
+        $label = $rpn <= 9 ? 'Rendah' : ($rpn <= 99 ? 'Sedang' : 'Tinggi');
 
         // Determine failure_mode from dominant issue
         $maxVal  = max($fco, $gnd, $beban, $pjt, $t2t, $t1t);

@@ -24,40 +24,40 @@ $v = fn($k, $d='') => htmlspecialchars((string)($record[$k] ?? $d));
 // FMEA reference table
 $fmeaRef = [
     'severity' => [
-        [1,  'Tidak ada efek'],
-        [2,  'Efek sangat ringan, tidak mengganggu operasional'],
-        [3,  'Efek ringan, gangguan minor'],
-        [4,  'Efek sedang, penurunan performa ringan'],
-        [5,  'Efek sedang, penurunan performa signifikan'],
-        [6,  'Efek besar, gangguan layanan sebagian'],
-        [7,  'Efek besar, gangguan layanan luas'],
-        [8,  'Efek sangat besar, pemadaman terlokalisasi'],
-        [9,  'Efek kritis, pemadaman luas'],
-        [10, 'Efek katastrofik, kegagalan total sistem'],
+        [1,  'Tidak ada indikasi gangguan'],
+        [2,  'Perlindungan ringan, dampak minimal'],
+        [3,  'Komponen penunjang, bukan komponen utama'],
+        [4,  'Deteksi dini, belum ada kerusakan nyata'],
+        [5,  'Komponen proteksi, dampak lokal'],
+        [6,  'Gangguan distribusi beban, area terbatas'],
+        [7,  'Gangguan meluas ke beberapa pelanggan'],
+        [8,  '—'],
+        [9,  'Komponen utama gardu, dampak signifikan'],
+        [10, '—'],
     ],
     'occurrence' => [
-        [1,  'Hampir tidak pernah terjadi'],
-        [2,  'Sangat jarang (1x / 5 tahun)'],
-        [3,  'Jarang (1x / 3 tahun)'],
-        [4,  'Kadang (1x / tahun)'],
-        [5,  'Cukup sering (beberapa kali / tahun)'],
-        [6,  'Sering (1x / bulan)'],
-        [7,  'Sangat sering (beberapa kali / bulan)'],
-        [8,  'Berulang (mingguan)'],
-        [9,  'Hampir selalu'],
-        [10, 'Selalu terjadi'],
+        [1,  'Total Temuan = 0'],
+        [2,  '—'],
+        [3,  '—'],
+        [4,  'Total Temuan 1 - 10'],
+        [5,  '—'],
+        [6,  '—'],
+        [7,  'Total Temuan 11 - 20'],
+        [8,  '—'],
+        [9,  'Total Temuan > 20'],
+        [10, '—'],
     ],
     'detection' => [
-        [1,  'Pasti terdeteksi sebelum berdampak'],
-        [2,  'Sangat mudah dideteksi'],
-        [3,  'Mudah dideteksi'],
-        [4,  'Cukup mudah dideteksi'],
-        [5,  'Deteksi sedang, perlu inspeksi'],
-        [6,  'Agak sulit dideteksi'],
-        [7,  'Sulit dideteksi, butuh alat khusus'],
-        [8,  'Sangat sulit dideteksi'],
-        [9,  'Hampir tidak bisa dideteksi'],
-        [10, 'Tidak terdeteksi sama sekali'],
+        [1,  '—'],
+        [2,  'Ada realisasi Tier 1 dan Tier 2 (deteksi sangat baik)'],
+        [3,  '—'],
+        [4,  '—'],
+        [5,  'Hanya ada Tier 1 atau Tier 2 saja (deteksi cukup)'],
+        [6,  '—'],
+        [7,  '—'],
+        [8,  '—'],
+        [9,  'Deteksi sangat buruk (tidak ada inspeksi)'],
+        [10, '—'],
     ],
 ];
 
@@ -182,7 +182,7 @@ $failureModes = [
                         <span id="rpn-value" class="text-4xl font-extrabold text-primary tabular-nums">1</span>
                         <div>
                             <span id="rpn-badge" class="px-3 py-1 rounded-full text-sm font-bold bg-green-100 text-green-800">Low Risk</span>
-                            <p id="rpn-hint" class="text-[10px] text-outline mt-1 text-right">RPN ≤ 100</p>
+                            <p id="rpn-hint" class="text-[10px] text-outline mt-1 text-right">RPN ≤ 9</p>
                         </div>
                     </div>
                 </div>
@@ -196,9 +196,9 @@ $failureModes = [
                 <label class="text-xs font-semibold text-outline uppercase tracking-wider">Override Risk Label <span class="text-outline font-normal">(opsional — kosongkan untuk otomatis)</span></label>
                 <select name="risk_label_override" class="block w-full px-4 py-2.5 bg-surface-container-low border-0 rounded-xl text-sm text-on-surface ring-1 ring-inset ring-outline-variant focus:ring-2 focus:ring-primary outline-none">
                     <option value="">— Otomatis berdasarkan RPN —</option>
-                    <option value="Rendah" <?= ($record['risk_label'] ?? '') === 'Rendah' ? 'selected' : '' ?>>Rendah (RPN ≤ 100)</option>
-                    <option value="Sedang" <?= ($record['risk_label'] ?? '') === 'Sedang' ? 'selected' : '' ?>>Sedang (RPN 101–200)</option>
-                    <option value="Tinggi" <?= ($record['risk_label'] ?? '') === 'Tinggi' ? 'selected' : '' ?>>Tinggi (RPN > 200)</option>
+                    <option value="Rendah" <?= ($record['risk_label'] ?? '') === 'Rendah' ? 'selected' : '' ?>>Rendah (RPN ≤ 9)</option>
+                    <option value="Sedang" <?= ($record['risk_label'] ?? '') === 'Sedang' ? 'selected' : '' ?>>Sedang (RPN 10–99)</option>
+                    <option value="Tinggi" <?= ($record['risk_label'] ?? '') === 'Tinggi' ? 'selected' : '' ?>>Tinggi (RPN ≥ 100)</option>
                 </select>
             </div>
         </div>
@@ -283,26 +283,26 @@ function recalcRPN() {
     const pct   = Math.min(100, (rpn / 1000 * 100)).toFixed(1);
     bar.style.width = pct + '%';
 
-    if (rpn <= 100) {
+    if (rpn <= 9) {
         badge.className = 'px-3 py-1 rounded-full text-sm font-bold bg-green-100 text-green-800';
         badge.textContent = 'Rendah';
         bar.className = 'h-full rounded-full bg-green-500 transition-all duration-300';
         box.style.borderColor = '#22c55e'; box.style.background = '#f0fdf4';
-        hint.textContent = 'RPN ≤ 100';
+        hint.textContent = 'RPN ≤ 9';
         document.getElementById('rpn-value').className = 'text-4xl font-extrabold text-green-600 tabular-nums';
-    } else if (rpn <= 200) {
+    } else if (rpn <= 99) {
         badge.className = 'px-3 py-1 rounded-full text-sm font-bold bg-amber-100 text-amber-800';
         badge.textContent = 'Sedang';
         bar.className = 'h-full rounded-full bg-amber-500 transition-all duration-300';
         box.style.borderColor = '#f59e0b'; box.style.background = '#fffbeb';
-        hint.textContent = 'RPN 101–200';
+        hint.textContent = 'RPN 10–99';
         document.getElementById('rpn-value').className = 'text-4xl font-extrabold text-amber-600 tabular-nums';
     } else {
         badge.className = 'px-3 py-1 rounded-full text-sm font-bold bg-red-100 text-red-800';
         badge.textContent = 'Tinggi';
         bar.className = 'h-full rounded-full bg-red-500 transition-all duration-300';
         box.style.borderColor = '#ef4444'; box.style.background = '#fef2f2';
-        hint.textContent = 'RPN > 200';
+        hint.textContent = 'RPN ≥ 100';
         document.getElementById('rpn-value').className = 'text-4xl font-extrabold text-red-600 tabular-nums';
     }
 }

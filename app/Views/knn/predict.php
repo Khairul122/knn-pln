@@ -149,7 +149,7 @@ $activeTab = isset($manualResult) && $manualResult ? 'manual' : (($hasBatch && $
                             <div class="text-right">
                                 <p class="text-[10px] text-outline font-semibold uppercase tracking-wider">Estimasi Risk</p>
                                 <p class="text-sm font-bold mt-0.5" id="rpnLabel">
-                                    <?php $rpnLabel = $rpn<=100?'Rendah':($rpn<=200?'Sedang':'Tinggi'); ?>
+                                    <?php $rpnLabel = $rpn<=9?'Rendah':($rpn<=99?'Sedang':'Tinggi'); ?>
                                     <span class="px-2.5 py-1 rounded-full <?= $riskBdg[$rpnLabel] ?>"><?= $rpnLabel ?></span>
                                 </p>
                             </div>
@@ -263,17 +263,32 @@ $activeTab = isset($manualResult) && $manualResult ? 'manual' : (($hasBatch && $
                 <p class="text-sm font-semibold text-on-surface">Prediksi Semua Data Berlabel</p>
                 <p class="text-xs text-outline mt-0.5">Jalankan KNN pada seluruh data berlabel tahun <?= $tahun ?> menggunakan model terpilih.</p>
             </div>
-            <form method="POST" action="<?= $baseUrl ?>/knn/predict/batch"
-                  data-confirm="Jalankan prediksi KNN pada seluruh data berlabel tahun <?= $tahun ?>. Hasil prediksi batch sebelumnya akan digantikan."
-                  data-confirm-title="Prediksi Batch" data-confirm-type="warning" data-confirm-ok="Jalankan">
-                <input type="hidden" name="model_id" value="<?= $selected['id'] ?>">
-                <input type="hidden" name="tahun"    value="<?= $tahun ?>">
-                <button type="submit"
-                        class="flex items-center gap-2 px-4 py-2.5 bg-primary text-white rounded-xl text-sm font-semibold hover:bg-on-primary-fixed-variant transition-colors shadow-sm">
-                    <span class="material-symbols-outlined text-[18px]">play_arrow</span>
-                    <?= $hasBatch ? 'Jalankan Ulang Prediksi' : 'Jalankan Prediksi Batch' ?>
-                </button>
-            </form>
+            <div class="flex items-center gap-3">
+                <?php if ($hasBatch): ?>
+                <form method="POST" action="<?= $baseUrl ?>/knn/predict/clear"
+                      data-confirm="Hapus seluruh hasil prediksi batch untuk model ini? Tindakan tidak dapat dibatalkan."
+                      data-confirm-title="Hapus Semua Prediksi" data-confirm-type="danger" data-confirm-ok="Hapus Semua">
+                    <input type="hidden" name="model_id" value="<?= $selected['id'] ?>">
+                    <input type="hidden" name="tahun"    value="<?= $tahun ?>">
+                    <button type="submit"
+                            class="flex items-center gap-2 px-4 py-2.5 bg-error text-white rounded-xl text-sm font-semibold hover:bg-red-700 transition-colors shadow-sm">
+                        <span class="material-symbols-outlined text-[18px]">delete_sweep</span>
+                        Hapus Semua Prediksi
+                    </button>
+                </form>
+                <?php endif; ?>
+                <form method="POST" action="<?= $baseUrl ?>/knn/predict/batch"
+                      data-confirm="Jalankan prediksi KNN pada seluruh data berlabel tahun <?= $tahun ?>. Hasil prediksi batch sebelumnya akan digantikan."
+                      data-confirm-title="Prediksi Batch" data-confirm-type="warning" data-confirm-ok="Jalankan">
+                    <input type="hidden" name="model_id" value="<?= $selected['id'] ?>">
+                    <input type="hidden" name="tahun"    value="<?= $tahun ?>">
+                    <button type="submit"
+                            class="flex items-center gap-2 px-4 py-2.5 bg-primary text-white rounded-xl text-sm font-semibold hover:bg-on-primary-fixed-variant transition-colors shadow-sm">
+                        <span class="material-symbols-outlined text-[18px]">play_arrow</span>
+                        <?= $hasBatch ? 'Jalankan Ulang Prediksi' : 'Jalankan Prediksi Batch' ?>
+                    </button>
+                </form>
+            </div>
         </div>
 
         <?php if ($hasBatch && !empty($batchResult)): ?>
@@ -417,7 +432,7 @@ function updateSlider(name, val) {
     const d   = parseInt(document.getElementById('detectionSlider').value);
     const rpn = s * o * d;
     document.getElementById('rpnDisplay').textContent = rpn;
-    const lbl = rpn <= 100 ? 'Rendah' : (rpn <= 200 ? 'Sedang' : 'Tinggi');
+    const lbl = rpn <= 9 ? 'Rendah' : (rpn <= 99 ? 'Sedang' : 'Tinggi');
     const cls = { Rendah: 'bg-green-100 text-green-800', Sedang: 'bg-amber-100 text-amber-800', Tinggi: 'bg-red-100 text-red-800' };
     const el  = document.getElementById('rpnLabel');
     el.innerHTML = `<span class="px-2.5 py-1 rounded-full ${cls[lbl]}">${lbl}</span>`;

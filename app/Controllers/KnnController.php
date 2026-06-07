@@ -230,6 +230,18 @@ class KnnController extends Controller
         $this->redirect('/knn/predict?model_id=' . $modelId . '&tahun=' . $tahun);
     }
 
+    // POST /knn/predict/clear
+    public function clearPredictionsBatch(): void
+    {
+        $modelId = (int) $this->input('model_id', 0);
+        $tahun   = (int) $this->input('tahun', 2025);
+        if ($modelId) {
+            $this->knnModel->clearPredictions($modelId);
+            Flash::set('success', 'Seluruh hasil prediksi batch berhasil dihapus.');
+        }
+        $this->redirect('/knn/predict?model_id=' . $modelId . '&tahun=' . $tahun);
+    }
+
     // POST /knn/delete/{id}
     public function deleteModel(string $id): void
     {

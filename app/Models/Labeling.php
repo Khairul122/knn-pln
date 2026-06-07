@@ -219,6 +219,16 @@ class Labeling extends Model
         return $stmt->fetchAll();
     }
 
+    public function deleteAll(int $tahun): bool
+    {
+        $stmt = $this->db->prepare("
+            DELETE l FROM {$this->table} l
+            JOIN pemeliharaan p ON p.id = l.pemeliharaan_id
+            WHERE p.tahun = ?
+        ");
+        return $stmt->execute([$tahun]);
+    }
+
     private function buildWhere(int $tahun, ?string $search, ?string $status, ?string $label): array
     {
         $where  = 'p.tahun = ?';

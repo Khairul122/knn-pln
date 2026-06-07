@@ -42,11 +42,23 @@ $riskDot = ['Rendah'=>'bg-green-500','Sedang'=>'bg-amber-500','Tinggi'=>'bg-red-
     <!-- Action bar top row -->
     <div class="flex items-center justify-between gap-3 mb-4">
         <div></div>
-        <a href="<?= $baseUrl ?>/labeling/split<?= $tahun ? '?tahun='.$tahun : '' ?>"
-           class="flex items-center gap-2 px-4 py-2.5 bg-secondary text-white rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity shadow-sm">
-            <span class="material-symbols-outlined text-[18px]">call_split</span>
-            Split Data
-        </a>
+        <div class="flex items-center gap-3">
+            <form method="POST" action="<?= $baseUrl ?>/labeling/delete-all" class="inline-block"
+                  data-confirm="Hapus seluruh data labeling FMEA tahun <?= $tahun ?>? Tindakan tidak dapat dibatalkan."
+                  data-confirm-title="Hapus Semua Label" data-confirm-type="danger" data-confirm-ok="Hapus Semua">
+                <input type="hidden" name="tahun" value="<?= $tahun ?>">
+                <button type="submit"
+                        class="flex items-center gap-2 px-4 py-2.5 bg-error text-white rounded-xl text-sm font-semibold hover:bg-red-700 transition-colors shadow-sm">
+                    <span class="material-symbols-outlined text-[18px]">delete_sweep</span>
+                    Hapus Semua Label FMEA
+                </button>
+            </form>
+            <a href="<?= $baseUrl ?>/labeling/split<?= $tahun ? '?tahun='.$tahun : '' ?>"
+               class="flex items-center gap-2 px-4 py-2.5 bg-secondary text-white rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity shadow-sm">
+                <span class="material-symbols-outlined text-[18px]">call_split</span>
+                Split Data
+            </a>
+        </div>
     </div>
 
     <!-- Auto-label action bar -->
