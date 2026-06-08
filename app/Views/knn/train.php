@@ -129,10 +129,15 @@ function knnQ(int $tahun, string $extra = ''): string {
                         <label class="block text-xs font-semibold text-on-surface-variant mb-2">Fitur yang Digunakan</label>
                         <div class="space-y-2">
                             <?php foreach ([
-                                ['severity',   'Severity (S)',   'Tingkat keparahan kegagalan (1–10)', true,  true],
-                                ['occurrence', 'Occurrence (O)', 'Frekuensi kejadian kegagalan (1–10)', true, true],
-                                ['detection',  'Detection (D)',  'Kemampuan mendeteksi kegagalan (1–10)', true, true],
-                                ['rpn',        'RPN',            'Risk Priority Number = S × O × D', false, false],
+                                ['tier1_inpeksi',             'Tier 1 - Inspeksi',             'Jumlah inspeksi Tier 1', true, false],
+                                ['tier1_temuan',              'Tier 1 - Temuan',               'Jumlah temuan Tier 1', true, false],
+                                ['tier2_inpeksi',             'Tier 2 - Inspeksi',             'Jumlah inspeksi Tier 2', true, false],
+                                ['tier2_temuan',              'Tier 2 - Temuan',               'Jumlah temuan Tier 2', true, false],
+                                ['pengukuran',                'Pengukuran',                    'Jumlah aktivitas pengukuran', true, false],
+                                ['pergantian_fco',            'Pergantian FCO',                'Jumlah pergantian Fuse Cut Out', true, false],
+                                ['penyeimbangan_beban_gardu', 'Penyeimbangan Beban Gardu',     'Jumlah penyeimbangan beban gardu', true, false],
+                                ['perbaikan_grounding_trafo', 'Perbaikan Grounding Trafo',     'Jumlah perbaikan grounding trafo', true, false],
+                                ['penghalang_panjat',         'Penghalang Panjat',             'Jumlah pemasangan penghalang panjat', true, false],
                             ] as [$val, $lbl, $desc, $checked, $required]): ?>
                             <label class="flex items-start gap-2.5 p-2.5 rounded-lg hover:bg-surface-container cursor-pointer group transition-colors">
                                 <input type="checkbox" name="features[]" value="<?= $val ?>"

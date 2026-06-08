@@ -12,6 +12,13 @@ class KnnController extends Controller
     private Labeling     $labelModel;
     private Pemeliharaan $pemModel;
 
+    /** Kolom mentah data pemeliharaan yang dipakai sebagai fitur KNN (mengikuti referensi training Python). */
+    public const RAW_FEATURES = [
+        'tier1_inpeksi', 'tier1_temuan', 'tier2_inpeksi', 'tier2_temuan',
+        'pengukuran', 'pergantian_fco', 'penyeimbangan_beban_gardu',
+        'perbaikan_grounding_trafo', 'penghalang_panjat',
+    ];
+
     public function __construct()
     {
         $this->requireAuth();
@@ -45,10 +52,9 @@ class KnnController extends Controller
         $metric = in_array($this->input('distance_metric'), ['euclidean', 'manhattan'])
                   ? $this->input('distance_metric') : 'euclidean';
 
-        $rawFeats   = $_POST['features'] ?? ['severity', 'occurrence', 'detection'];
-        $validFeats = ['severity', 'occurrence', 'detection', 'rpn'];
-        $feats      = array_values(array_intersect((array)$rawFeats, $validFeats));
-        if (empty($feats)) $feats = ['severity', 'occurrence', 'detection'];
+        $rawFeats   = $_POST['features'] ?? self::RAW_FEATURES;
+        $feats      = array_values(array_intersect((array)$rawFeats, self::RAW_FEATURES));
+        if (empty($feats)) $feats = self::RAW_FEATURES;
 
         $trainData = $this->labelModel->getSplitData($tahun, 'train');
         if (empty($trainData)) {
@@ -151,13 +157,12 @@ class KnnController extends Controller
             $batchResult = $this->knnModel->getPredictions((int)$selected['id']);
         }
 
-        $s = $o = $d = 5;
-        $rpn = 125;
+        $manualInput  = array_fill_keys(self::RAW_FEATURES, 0);
         $manualResult = null;
 
         $this->view('knn.predict', compact(
             'tahun', 'years', 'history', 'selected', 'batchResult', 'hasBatch',
-            'manualResult', 's', 'o', 'd', 'rpn'
+            'manualResult', 'manualInput'
         ));
     }
 
@@ -170,16 +175,16 @@ class KnnController extends Controller
         $history  = $this->knnModel->getAll($tahun);
         $selected = $this->knnModel->findById($modelId) ?: (!empty($history) ? $history[0] : null);
 
-        $s   = max(1, min(10, (int) $this->input('severity',   5)));
-        $o   = max(1, min(10, (int) $this->input('occurrence', 5)));
-        $d   = max(1, min(10, (int) $this->input('detection',  5)));
-        $rpn = $s * $o * $d;
+        $manualInput = [];
+        foreach (self::RAW_FEATURES as $f) {
+            $manualInput[$f] = max(0, (int) $this->input($f, 0));
+        }
 
         $manualResult = null;
         if ($selected && !empty($selected['model_path']) && file_exists($selected['model_path'])) {
             $clf          = KNNClassifier::load($selected['model_path']);
-            $manualResult = $clf->predict(['severity' => $s, 'occurrence' => $o, 'detection' => $d, 'rpn' => $rpn]);
-            $manualResult['input'] = compact('s', 'o', 'd', 'rpn');
+            $manualResult = $clf->predict($manualInput);
+            $manualResult['input'] = $manualInput;
         } else {
             Flash::set('error', 'Model tidak ditemukan. Latih model terlebih dahulu.');
         }
@@ -192,7 +197,7 @@ class KnnController extends Controller
 
         $this->view('knn.predict', compact(
             'tahun', 'years', 'history', 'selected', 'manualResult',
-            'hasBatch', 'batchResult', 's', 'o', 'd', 'rpn'
+            'hasBatch', 'batchResult', 'manualInput'
         ));
     }
 

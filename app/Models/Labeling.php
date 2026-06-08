@@ -141,8 +141,13 @@ class Labeling extends Model
         return (int)$stmt->fetchColumn() > 0;
     }
 
+    /** Seed tetap agar hasil split reproducible, menyamai random_state=42 pada referensi Python. */
+    private const SPLIT_SEED = 42;
+
     public function applyStratifiedSplit(int $tahun, float $trainRatio): array
     {
+        mt_srand(self::SPLIT_SEED);
+
         $stmt = $this->db->prepare("
             SELECT l.id, l.risk_label
             FROM {$this->table} l
@@ -176,6 +181,8 @@ class Labeling extends Model
             $this->db->prepare("UPDATE {$this->table} SET split_type='test' WHERE id IN ({$ph})")->execute($testIds);
         }
 
+        mt_srand(); // restore non-deterministic randomness for subsequent operations
+
         return ['train' => count($trainIds), 'test' => count($testIds)];
     }
 
@@ -194,7 +201,10 @@ class Labeling extends Model
         $stmt = $this->db->prepare("
             SELECT l.id AS label_id, l.pemeliharaan_id,
                    l.severity, l.occurrence, l.detection, l.rpn,
-                   l.risk_label, p.penyulang, p.bulan
+                   l.risk_label, p.penyulang, p.bulan,
+                   p.tier1_inpeksi, p.tier1_temuan, p.tier2_inpeksi, p.tier2_temuan,
+                   p.pengukuran, p.pergantian_fco, p.penyeimbangan_beban_gardu,
+                   p.perbaikan_grounding_trafo, p.penghalang_panjat
             FROM {$this->table} l
             JOIN pemeliharaan p ON p.id = l.pemeliharaan_id
             WHERE p.tahun = ? AND l.split_type = ?
@@ -209,7 +219,10 @@ class Labeling extends Model
         $stmt = $this->db->prepare("
             SELECT l.id AS label_id, l.pemeliharaan_id,
                    l.severity, l.occurrence, l.detection, l.rpn,
-                   l.risk_label, l.split_type, p.penyulang, p.bulan
+                   l.risk_label, l.split_type, p.penyulang, p.bulan,
+                   p.tier1_inpeksi, p.tier1_temuan, p.tier2_inpeksi, p.tier2_temuan,
+                   p.pengukuran, p.pergantian_fco, p.penyeimbangan_beban_gardu,
+                   p.perbaikan_grounding_trafo, p.penghalang_panjat
             FROM {$this->table} l
             JOIN pemeliharaan p ON p.id = l.pemeliharaan_id
             WHERE p.tahun = ?

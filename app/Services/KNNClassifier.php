@@ -41,17 +41,18 @@ class KNNClassifier
         $votes     = [];
         $neighbors = [];
         foreach ($topK as $i => $dist) {
-            $lbl         = $this->trainingData[$i]['risk_label'];
+            $row         = $this->trainingData[$i];
+            $lbl         = $row['risk_label'];
             $votes[$lbl] = ($votes[$lbl] ?? 0) + 1;
-            $neighbors[] = [
-                'penyulang'  => $this->trainingData[$i]['penyulang'] ?? '-',
+            $neighbor    = [
+                'penyulang'  => $row['penyulang'] ?? '-',
                 'risk_label' => $lbl,
-                'severity'   => $this->trainingData[$i]['severity'],
-                'occurrence' => $this->trainingData[$i]['occurrence'],
-                'detection'  => $this->trainingData[$i]['detection'],
-                'rpn'        => $this->trainingData[$i]['rpn'],
                 'distance'   => round($dist, 5),
             ];
+            foreach ($this->features as $f) {
+                $neighbor[$f] = $row[$f] ?? null;
+            }
+            $neighbors[] = $neighbor;
         }
         arsort($votes);
         $pred       = array_key_first($votes);

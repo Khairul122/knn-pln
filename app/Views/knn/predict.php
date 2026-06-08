@@ -19,7 +19,18 @@ $riskBdg  = ['Rendah'=>'bg-green-100 text-green-800','Sedang'=>'bg-amber-100 tex
 $riskBig  = ['Rendah'=>'bg-green-50 border-green-400 text-green-700','Sedang'=>'bg-amber-50 border-amber-400 text-amber-700','Tinggi'=>'bg-red-50 border-red-400 text-red-700'];
 $riskIcon = ['Rendah'=>'check_circle','Sedang'=>'warning','Tinggi'=>'dangerous'];
 
-$s   ??= 5; $o ??= 5; $d ??= 5; $rpn ??= 125;
+$rawFeatureLabels = [
+    'tier1_inpeksi'             => 'Tier 1 - Inspeksi',
+    'tier1_temuan'              => 'Tier 1 - Temuan',
+    'tier2_inpeksi'             => 'Tier 2 - Inspeksi',
+    'tier2_temuan'              => 'Tier 2 - Temuan',
+    'pengukuran'                => 'Pengukuran',
+    'pergantian_fco'            => 'Pergantian FCO',
+    'penyeimbangan_beban_gardu' => 'Penyeimbangan Beban Gardu',
+    'perbaikan_grounding_trafo' => 'Perbaikan Grounding Trafo',
+    'penghalang_panjat'         => 'Penghalang Panjat',
+];
+$manualInput ??= array_fill_keys(array_keys($rawFeatureLabels), 0);
 $activeTab = isset($manualResult) && $manualResult ? 'manual' : (($hasBatch && $batchResult) ? 'batch' : 'manual');
 ?>
 <!DOCTYPE html>
@@ -114,46 +125,21 @@ $activeTab = isset($manualResult) && $manualResult ? 'manual' : (($hasBatch && $
             <div class="bg-surface-container-lowest rounded-xl border border-outline-variant/30 shadow-sm p-5">
                 <h3 class="text-sm font-semibold text-on-surface mb-5 flex items-center gap-2">
                     <span class="material-symbols-outlined text-primary text-[20px]">tune</span>
-                    Input Nilai FMEA
+                    Input Data Pemeliharaan
                 </h3>
                 <form method="POST" action="<?= $baseUrl ?>/knn/predict" id="manualForm">
                     <input type="hidden" name="model_id" value="<?= $selected['id'] ?>">
                     <input type="hidden" name="tahun"    value="<?= $tahun ?>">
 
-                    <?php foreach ([
-                        ['severity',   'Severity (S)',   'Dampak keparahan kegagalan', $s],
-                        ['occurrence', 'Occurrence (O)', 'Frekuensi kegagalan terjadi', $o],
-                        ['detection',  'Detection (D)',  'Kemampuan mendeteksi kegagalan', $d],
-                    ] as [$name, $lbl, $desc, $val]): ?>
-                    <div class="mb-5">
-                        <div class="flex items-center justify-between mb-1.5">
-                            <label class="text-xs font-semibold text-on-surface-variant"><?= $lbl ?></label>
-                            <span class="px-2.5 py-0.5 rounded-lg bg-primary text-white text-sm font-bold" id="<?= $name ?>Val"><?= $val ?></span>
+                    <div class="grid grid-cols-2 gap-x-4 gap-y-4 mb-5">
+                        <?php foreach ($rawFeatureLabels as $name => $lbl): ?>
+                        <div>
+                            <label class="block text-xs font-semibold text-on-surface-variant mb-1.5"><?= $lbl ?></label>
+                            <input type="number" name="<?= $name ?>" min="0" step="1"
+                                   value="<?= (int) ($manualInput[$name] ?? 0) ?>"
+                                   class="w-full text-sm border border-outline-variant rounded-lg px-3 py-1.5 bg-white text-on-surface focus:ring-1 focus:ring-primary outline-none">
                         </div>
-                        <input type="range" name="<?= $name ?>" id="<?= $name ?>Slider"
-                               min="1" max="10" value="<?= $val ?>"
-                               class="w-full accent-primary cursor-pointer"
-                               oninput="updateSlider('<?= $name ?>', this.value)">
-                        <div class="flex justify-between text-[10px] text-outline mt-0.5">
-                            <span>1</span><span><?= $desc ?></span><span>10</span>
-                        </div>
-                    </div>
-                    <?php endforeach; ?>
-
-                    <div class="bg-surface-container rounded-xl p-4 mb-5">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-[10px] text-outline font-semibold uppercase tracking-wider">RPN (S × O × D)</p>
-                                <p class="text-3xl font-bold text-primary mt-0.5" id="rpnDisplay"><?= $rpn ?></p>
-                            </div>
-                            <div class="text-right">
-                                <p class="text-[10px] text-outline font-semibold uppercase tracking-wider">Estimasi Risk</p>
-                                <p class="text-sm font-bold mt-0.5" id="rpnLabel">
-                                    <?php $rpnLabel = $rpn<=9?'Rendah':($rpn<=99?'Sedang':'Tinggi'); ?>
-                                    <span class="px-2.5 py-1 rounded-full <?= $riskBdg[$rpnLabel] ?>"><?= $rpnLabel ?></span>
-                                </p>
-                            </div>
-                        </div>
+                        <?php endforeach; ?>
                     </div>
 
                     <button type="submit"
@@ -187,9 +173,10 @@ $activeTab = isset($manualResult) && $manualResult ? 'manual' : (($hasBatch && $
                                 </div>
                             </div>
                         </div>
-                        <div class="text-right text-xs opacity-70">
-                            <p>S=<?= $inp['s']??'-' ?> · O=<?= $inp['o']??'-' ?> · D=<?= $inp['d']??'-' ?></p>
-                            <p class="font-bold mt-0.5">RPN = <?= $inp['rpn']??'-' ?></p>
+                        <div class="text-right text-xs opacity-70 max-w-[180px]">
+                            <?php foreach ($rawFeatureLabels as $fkey => $flbl): ?>
+                            <p><?= $flbl ?>: <span class="font-semibold"><?= $inp[$fkey] ?? '-' ?></span></p>
+                            <?php endforeach; ?>
                         </div>
                     </div>
 
@@ -216,10 +203,9 @@ $activeTab = isset($manualResult) && $manualResult ? 'manual' : (($hasBatch && $
                         <thead class="bg-surface-container-low text-[10px] font-semibold text-outline uppercase tracking-wider">
                             <tr>
                                 <th class="px-3 py-2 text-left">Penyulang</th>
-                                <th class="px-3 py-2 text-center">S</th>
-                                <th class="px-3 py-2 text-center">O</th>
-                                <th class="px-3 py-2 text-center">D</th>
-                                <th class="px-3 py-2 text-center">RPN</th>
+                                <?php foreach ($selected['feature_columns'] ? explode(',', $selected['feature_columns']) : array_keys($rawFeatureLabels) as $fkey): ?>
+                                <th class="px-3 py-2 text-center" title="<?= $rawFeatureLabels[$fkey] ?? $fkey ?>"><?= $rawFeatureLabels[$fkey] ?? $fkey ?></th>
+                                <?php endforeach; ?>
                                 <th class="px-3 py-2 text-center">Label</th>
                                 <th class="px-3 py-2 text-right">Jarak</th>
                             </tr>
@@ -228,10 +214,9 @@ $activeTab = isset($manualResult) && $manualResult ? 'manual' : (($hasBatch && $
                             <?php foreach ($manualResult['neighbors'] as $nb): $bdg = $riskBdg[$nb['risk_label']] ?? ''; ?>
                             <tr class="hover:bg-surface-container-low/50">
                                 <td class="px-3 py-2 font-semibold text-on-surface"><?= htmlspecialchars($nb['penyulang']) ?></td>
-                                <td class="px-3 py-2 text-center"><?= $nb['severity'] ?></td>
-                                <td class="px-3 py-2 text-center"><?= $nb['occurrence'] ?></td>
-                                <td class="px-3 py-2 text-center"><?= $nb['detection'] ?></td>
-                                <td class="px-3 py-2 text-center font-semibold"><?= $nb['rpn'] ?></td>
+                                <?php foreach ($selected['feature_columns'] ? explode(',', $selected['feature_columns']) : array_keys($rawFeatureLabels) as $fkey): ?>
+                                <td class="px-3 py-2 text-center"><?= $nb[$fkey] ?? '-' ?></td>
+                                <?php endforeach; ?>
                                 <td class="px-3 py-2 text-center">
                                     <span class="px-2 py-0.5 rounded-full font-semibold <?= $bdg ?>"><?= $nb['risk_label'] ?></span>
                                 </td>
@@ -248,7 +233,7 @@ $activeTab = isset($manualResult) && $manualResult ? 'manual' : (($hasBatch && $
                 <div class="bg-surface-container-lowest rounded-xl border border-dashed border-outline-variant p-10 text-center">
                     <span class="material-symbols-outlined text-[48px] text-outline/30 block mb-3">scatter_plot</span>
                     <p class="text-sm font-semibold text-on-surface mb-1">Belum ada prediksi</p>
-                    <p class="text-xs text-outline">Atur nilai S, O, D di kiri dan klik "Prediksi dengan KNN".</p>
+                    <p class="text-xs text-outline">Isi data pemeliharaan di kiri dan klik "Prediksi dengan KNN".</p>
                 </div>
                 <?php endif; ?>
             </div>
@@ -424,20 +409,6 @@ $activeTab = isset($manualResult) && $manualResult ? 'manual' : (($hasBatch && $
 <?php require APP_PATH . '/Views/partials/toast.php'; ?>
 <?php require APP_PATH . '/Views/partials/sidebar_script.php'; ?>
 <script>
-// Slider updates
-function updateSlider(name, val) {
-    document.getElementById(name + 'Val').textContent = val;
-    const s   = parseInt(document.getElementById('severitySlider').value);
-    const o   = parseInt(document.getElementById('occurrenceSlider').value);
-    const d   = parseInt(document.getElementById('detectionSlider').value);
-    const rpn = s * o * d;
-    document.getElementById('rpnDisplay').textContent = rpn;
-    const lbl = rpn <= 9 ? 'Rendah' : (rpn <= 99 ? 'Sedang' : 'Tinggi');
-    const cls = { Rendah: 'bg-green-100 text-green-800', Sedang: 'bg-amber-100 text-amber-800', Tinggi: 'bg-red-100 text-red-800' };
-    const el  = document.getElementById('rpnLabel');
-    el.innerHTML = `<span class="px-2.5 py-1 rounded-full ${cls[lbl]}">${lbl}</span>`;
-}
-
 // Tab switcher
 function switchTab(name) {
     ['manual','batch'].forEach(t => {

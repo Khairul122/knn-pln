@@ -250,7 +250,7 @@ class LabelingController extends Controller
     /**
      * Derive FMEA S, O, D, RPN, risk_label, failure_mode from pemeliharaan row.
      *
-     * Severity  → based on total kerusakan/temuan (how bad the findings are)
+     * Severity  → based on dominant maintenance action taken (FCO/grounding > beban > pengukuran > none)
      * Occurrence → based on total maintenance workload (how often issues arise)
      * Detection  → inversely based on total inspections (more inspection = easier to detect)
      */
@@ -266,22 +266,14 @@ class LabelingController extends Controller
         $gnd  = (int)$p['perbaikan_grounding_trafo'];
         $pjt  = (int)$p['penghalang_panjat'];
 
-        // Severity (S) berdasarkan catatan baru
-        $s = 1; // Default: Tidak ada indikasi gangguan
-        if ($gnd > 0) {
-            $s = 9; // Komponen utama gardu, dampak signifikan
-        } elseif ($t2t > 0) {
-            $s = 7; // Gangguan meluas ke beberapa pelanggan
+        // Severity (S) — disamakan dengan referensi Python severity()
+        $s = 1; // Default
+        if ($fco > 0 || $gnd > 0) {
+            $s = 9; // Pergantian FCO / perbaikan grounding trafo
         } elseif ($beban > 0) {
-            $s = 6; // Gangguan distribusi beban, area terbatas
-        } elseif ($fco > 0) {
-            $s = 5; // Komponen proteksi, dampak lokal
-        } elseif ($t1t > 0) {
-            $s = 4; // Deteksi dini, belum ada kerusakan nyata
-        } elseif ($pjt > 0) {
-            $s = 3; // Komponen penunjang, bukan komponen utama
-        } elseif ($ukur > 0 || $t1i > 0 || $t2i > 0) {
-            $s = 2; // Perlindungan ringan, dampak minimal
+            $s = 6; // Penyeimbangan beban gardu
+        } elseif ($ukur > 0) {
+            $s = 4; // Pengukuran
         }
 
         // Occurrence (O) berdasarkan catatan baru

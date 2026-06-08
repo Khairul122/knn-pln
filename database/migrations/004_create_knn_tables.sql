@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS knn_models (
     id              INT UNSIGNED    NOT NULL AUTO_INCREMENT PRIMARY KEY,
     tahun           YEAR            NOT NULL,
     k_value         TINYINT UNSIGNED NOT NULL DEFAULT 5,
-    feature_columns VARCHAR(100)    NOT NULL DEFAULT 'severity,occurrence,detection',
+    feature_columns VARCHAR(255)    NOT NULL DEFAULT 'severity,occurrence,detection',
     distance_metric VARCHAR(20)     NOT NULL DEFAULT 'euclidean',
     train_count     INT UNSIGNED    DEFAULT 0,
     test_count      INT UNSIGNED    DEFAULT 0,
