@@ -1,7 +1,11 @@
 <!-- ═══════════════════════════════════════════
      HERO SECTION
-     Variables inherited from parent scope: $baseUrl
+     Variables inherited from parent scope: $baseUrl, $summary, $penyulangCount, $latestModel
      ═══════════════════════════════════════════ -->
+<?php
+$heroTotalData = number_format((int)($summary['total_pemeliharaan'] ?? 0));
+$heroAkurasi   = !empty($latestModel) ? round(((float)$latestModel['accuracy']) * 100, 1) . '%' : '-';
+?>
 <section id="hero" class="relative h-[600px] flex items-center overflow-hidden">
   <div class="absolute inset-0 z-0">
     <img alt="Grid Infrastructure"
@@ -39,10 +43,10 @@
 <div class="bg-primary text-white py-8">
   <div class="container mx-auto px-margin-desktop grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
     <?php foreach ([
-      ['12',     'Penyulang Terpantau'],
-      ['5.8K+',  'Data Pemeliharaan'],
-      ['94.2%',  'Akurasi KNN'],
-      ['< 2ms',  'Waktu Prediksi'],
+      [(string)($penyulangCount ?? 0), 'Penyulang Terpantau'],
+      [$heroTotalData,                 'Data Pemeliharaan'],
+      [$heroAkurasi,                   'Akurasi KNN'],
+      ['< 2ms',                        'Waktu Prediksi'],
     ] as [$val, $lbl]): ?>
     <div class="reveal">
       <p class="text-3xl font-bold"><?= $val ?></p>

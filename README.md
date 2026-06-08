@@ -169,7 +169,7 @@ knn-pln/
 | detection       | TINYINT(1-10)                      | Kemudahan deteksi (10 = sangat sulit dideteksi)    |
 | rpn             | SMALLINT                           | Risk Priority Number = S × O × D                   |
 | risk_label      | ENUM('Rendah','Sedang','Tinggi')   | Label risiko final                                  |
-| split_type      | ENUM('train','test') NULL          | Hasil stratified split; NULL = belum di-split       |
+| split_type      | ENUM('train','test') NULL          | Hasil stratified split (seed tetap, lihat [Split Data](#3-split-data-labelingsplit)); NULL = belum di-split |
 | catatan         | TEXT NULL                          |                                                     |
 | labeled_by      | INT UNSIGNED FK → users.id         |                                                     |
 
@@ -181,7 +181,7 @@ knn-pln/
 | id               | INT UNSIGNED PK |                                                 |
 | tahun            | YEAR            |                                                 |
 | k_value          | TINYINT         | Nilai K yang digunakan saat training            |
-| feature_columns  | VARCHAR(100)    | Fitur CSV, misal: `severity,occurrence,detection` |
+| feature_columns  | VARCHAR(255)    | Fitur CSV, misal: `tier1_inpeksi,tier1_temuan,tier2_inpeksi,...` |
 | distance_metric  | VARCHAR(20)     | `euclidean` atau `manhattan`                    |
 | train_count      | INT             | Jumlah data training                            |
 | test_count       | INT             | Jumlah data test                                |
@@ -342,10 +342,11 @@ RPN = Severity × Occurrence × Detection
 | 100 – 1000  | Tinggi |
 
 - **Manual:** isi form Severity/Occurrence/Detection, RPN dihitung otomatis.
-- **Auto-label:** tombol batch yang menghitung RPN dari data yang sudah ada dan mengisi label otomatis berdasarkan threshold di atas.
-  - **Severity (S):** Ditentukan berdasarkan hierarki keparahan jenis komponen pemeliharaan (grounding/trafo=9, temuan tier 2=7, beban=6, FCO=5, temuan tier 1=4, penghalang panjat=3, pengukuran/inspeksi=2, tidak ada gangguan=1).
-  - **Occurrence (O):** Ditentukan dari total temuan inspeksi per bulan (temuan=0 $\rightarrow$ O=1, 1-10 $\rightarrow$ O=4, 11-20 $\rightarrow$ O=7, >20 $\rightarrow$ O=9).
-  - **Detection (D):** Ditentukan dari ketersediaan realisasi inspeksi bulanan (kedua inspeksi ada $\rightarrow$ D=2, salah satu $\rightarrow$ D=5, tidak ada $\rightarrow$ D=9).
+- **Auto-label:** tombol batch yang menghitung RPN dari data yang sudah ada dan mengisi label otomatis berdasarkan threshold di atas. Logikanya ada di `LabelingController::computeFmea()` dan **disamakan dengan referensi Python** (severity 4 level, label murni dari threshold RPN — bukan ground truth eksternal):
+  - **Severity (S):** 4 level berdasarkan tindakan pemeliharaan dominan — `pergantian_fco`/`perbaikan_grounding_trafo` > 0 → S=9; `penyeimbangan_beban_gardu` > 0 → S=6; `pengukuran` > 0 → S=4; selain itu → S=1.
+  - **Occurrence (O):** dari total temuan inspeksi (`tier1_temuan + tier2_temuan`) per bulan (0 → O=1, 1–10 → O=4, 11–20 → O=7, >20 → O=9).
+  - **Detection (D):** dari ketersediaan realisasi inspeksi bulanan (Tier 1 dan Tier 2 ada → D=2, salah satu saja → D=5, tidak ada → D=9).
+  - `risk_label` murni hasil threshold RPN (lihat tabel di atas) — tidak lagi memakai label ground truth dari sumber eksternal.
 - Setiap pemeliharaan maksimal punya **1 label** (UNIQUE constraint pada `pemeliharaan_id`).
 
 ---
@@ -355,10 +356,12 @@ RPN = Severity × Occurrence × Detection
 Stratified split menjaga proporsi kelas (Rendah/Sedang/Tinggi) di kedua set:
 
 ```php
+// Seed tetap (mt_srand(42)) agar hasil split reproducible — menyamai random_state=42 di referensi Python
 // Per kelas: acak ID → ambil n = round(total × ratio) untuk train
 // Sisa → test
 ```
 
+- Split bersifat **reproducible**: `Labeling::applyStratifiedSplit()` memanggil `mt_srand(self::SPLIT_SEED)` (seed = 42, menyamai `random_state=42` pada referensi Python) sebelum `shuffle()`, lalu mengembalikan seed ke kondisi non-deterministik setelah selesai.
 - Rasio yang tersedia: 70/30, 75/25, 80/20, 90/10.
 - Hasil disimpan di kolom `split_type` pada tabel `labeling`.
 - Split dapat di-reset dan dijalankan ulang.
@@ -370,7 +373,7 @@ Stratified split menjaga proporsi kelas (Rendah/Sedang/Tinggi) di kedua set:
 **Konfigurasi yang dapat diatur:**
 - **K** (1–20): jumlah tetangga terdekat
 - **Metrik jarak**: Euclidean (default) atau Manhattan
-- **Fitur**: severity, occurrence, detection, rpn (pilih minimal 1)
+- **Fitur**: 9 kolom mentah data pemeliharaan — `tier1_inpeksi, tier1_temuan, tier2_inpeksi, tier2_temuan, pengukuran, pergantian_fco, penyeimbangan_beban_gardu, perbaikan_grounding_trafo, penghalang_panjat` (lihat `KnnController::RAW_FEATURES`; pilih minimal 1). Daftar fitur ini disamakan dengan referensi training Python — model dilatih langsung dari data pemeliharaan, bukan dari skor S/O/D/RPN turunan.
 
 **Proses training:**
 1. Ambil data `split_type = 'train'` dari DB.
@@ -400,9 +403,8 @@ Menampilkan:
 ### 6. Prediksi (`/knn/predict`)
 
 **Tab Manual:**
-- Input Severity, Occurrence, Detection via range slider
-- RPN dihitung live di browser
-- Tampil: label prediksi, confidence, tabel K tetangga terdekat
+- Input berupa angka untuk masing-masing dari 9 kolom mentah pemeliharaan (`$rawFeatureLabels` di `predict.php`), sesuai fitur yang dipakai model terpilih
+- Tampil: label prediksi, confidence, daftar nilai fitur input, dan tabel K tetangga terdekat (kolom tabel menyesuaikan `feature_columns` model)
 
 **Tab Batch:**
 - Prediksi semua data berlabel sekaligus
@@ -525,6 +527,16 @@ Router tidak me-require semua controller di awal. Setiap controller di-require h
 | 100 – 1000  | Tinggi |
 
 Batas ini di-hardcode di `LabelingController::computeFmea()`. Jika perlu diubah, edit method tersebut.
+
+### Penyelarasan dengan Referensi Python
+
+Untuk menyamakan hasil dengan skrip referensi Python (sklearn KNN), beberapa hal disesuaikan:
+- **Fitur KNN** memakai 9 kolom mentah pemeliharaan (`KnnController::RAW_FEATURES`), bukan skor S/O/D/RPN turunan.
+- **Formula Severity** disederhanakan dari 8 level menjadi 4 level (lihat `computeFmea()`).
+- **`risk_label`** dihasilkan murni dari threshold RPN (S × O × D), bukan dari label ground truth eksternal.
+- **Split data** memakai seed tetap `mt_srand(42)` agar reproducible, menyamai `random_state=42`.
+
+> **Catatan penting:** Karena `risk_label` adalah fungsi deterministik dari kolom mentah yang sama yang dipakai sebagai fitur KNN, kombinasi fitur yang identik akan selalu memiliki label yang sama. Jika banyak baris memiliki kombinasi fitur mentah yang sama dan tersebar di train & test set, akurasi evaluasi bisa terlihat sangat tinggi (mendekati 100%) — ini mencerminkan duplikasi data, bukan model yang sempurna. Tambahkan variasi data atau gunakan deduplikasi sebelum split jika ingin evaluasi yang lebih realistis.
 
 ### Flash Messages
 
