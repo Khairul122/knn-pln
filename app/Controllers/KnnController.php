@@ -48,7 +48,7 @@ class KnnController extends Controller
     public function train(): void
     {
         $tahun  = (int) $this->input('tahun', 2025);
-        $k      = max(1, min(20, (int) $this->input('k_value', 5)));
+        $k      = max(1, min(20, (int) $this->input('k_value', 3)));
         $metric = in_array($this->input('distance_metric'), ['euclidean', 'manhattan'])
                   ? $this->input('distance_metric') : 'euclidean';
 

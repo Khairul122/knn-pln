@@ -90,7 +90,7 @@ $numericFields = [
                         <?php foreach ($numericFields as [$field, $label]): ?>
                         <div class="space-y-1">
                             <label class="text-xs font-semibold text-outline uppercase tracking-wider"><?= $label ?></label>
-                            <input type="number" name="<?= $field ?>" min="0" value="<?= $v($field, 0) ?>"
+                            <input type="number" name="<?= $field ?>" min="0" step="0.01" value="<?= 0 + $v($field, 0) ?>"
                                    class="block w-full px-4 py-2.5 bg-surface-container-low border-0 rounded-xl text-sm text-on-surface ring-1 ring-inset ring-outline-variant focus:ring-2 focus:ring-primary focus:bg-white transition-all outline-none">
                         </div>
                         <?php endforeach; ?>

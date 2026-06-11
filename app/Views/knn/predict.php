@@ -135,8 +135,8 @@ $activeTab = isset($manualResult) && $manualResult ? 'manual' : (($hasBatch && $
                         <?php foreach ($rawFeatureLabels as $name => $lbl): ?>
                         <div>
                             <label class="block text-xs font-semibold text-on-surface-variant mb-1.5"><?= $lbl ?></label>
-                            <input type="number" name="<?= $name ?>" min="0" step="1"
-                                   value="<?= (int) ($manualInput[$name] ?? 0) ?>"
+                            <input type="number" name="<?= $name ?>" min="0" step="0.01"
+                                   value="<?= 0 + ($manualInput[$name] ?? 0) ?>"
                                    class="w-full text-sm border border-outline-variant rounded-lg px-3 py-1.5 bg-white text-on-surface focus:ring-1 focus:ring-primary outline-none">
                         </div>
                         <?php endforeach; ?>

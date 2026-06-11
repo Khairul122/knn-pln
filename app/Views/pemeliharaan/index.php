@@ -104,7 +104,7 @@ function qStr(array $merge = []): string {
                         <td class="px-4 py-3 font-semibold text-sm text-on-surface"><?= htmlspecialchars($row['penyulang']) ?></td>
                         <td class="px-4 py-3 text-center text-sm text-on-surface-variant"><?= $namaBulan[$row['bulan']] ?? $row['bulan'] ?></td>
                         <?php foreach (['tier1_inpeksi','tier1_temuan','tier2_inpeksi','tier2_temuan','pengukuran','pergantian_fco','penyeimbangan_beban_gardu','perbaikan_grounding_trafo','penghalang_panjat'] as $col): ?>
-                        <td class="px-4 py-3 text-center text-sm <?= $row[$col] > 0 ? 'text-on-surface font-medium' : 'text-outline' ?>"><?= $row[$col] ?></td>
+                        <td class="px-4 py-3 text-center text-sm <?= $row[$col] > 0 ? 'text-on-surface font-medium' : 'text-outline' ?>"><?= 0 + $row[$col] ?></td>
                         <?php endforeach; ?>
                         <td class="px-4 py-3 text-center">
                             <div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">

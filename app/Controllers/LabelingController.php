@@ -3,6 +3,7 @@ require_once CORE_PATH . '/Controller.php';
 require_once CORE_PATH . '/Flash.php';
 require_once APP_PATH  . '/Models/Labeling.php';
 require_once APP_PATH  . '/Models/Pemeliharaan.php';
+require_once APP_PATH  . '/Services/FmeaScorer.php';
 
 class LabelingController extends Controller
 {
@@ -256,67 +257,6 @@ class LabelingController extends Controller
      */
     private function computeFmea(array $p): array
     {
-        $t1i = (int)$p['tier1_inpeksi'];
-        $t1t = (int)$p['tier1_temuan'];
-        $t2i = (int)$p['tier2_inpeksi'];
-        $t2t = (int)$p['tier2_temuan'];
-        $ukur = (int)$p['pengukuran'];
-        $fco  = (int)$p['pergantian_fco'];
-        $beban = (int)$p['penyeimbangan_beban_gardu'];
-        $gnd  = (int)$p['perbaikan_grounding_trafo'];
-        $pjt  = (int)$p['penghalang_panjat'];
-
-        // Severity (S) — disamakan dengan referensi Python severity()
-        $s = 1; // Default
-        if ($fco > 0 || $gnd > 0) {
-            $s = 9; // Pergantian FCO / perbaikan grounding trafo
-        } elseif ($beban > 0) {
-            $s = 6; // Penyeimbangan beban gardu
-        } elseif ($ukur > 0) {
-            $s = 4; // Pengukuran
-        } elseif ($pjt > 0) {
-            $s = 2; // Penghalang panjat
-        }
-
-        // Occurrence (O) berdasarkan catatan baru
-        $totalTemuan = $t1t + $t2t;
-        $o = match(true) {
-            $totalTemuan === 0 => 1,
-            $totalTemuan <= 10  => 4,
-            $totalTemuan <= 20  => 7,
-            default             => 9,
-        };
-
-        // Detection (D) berdasarkan catatan baru
-        $d = match(true) {
-            $t1i > 0 && $t2i > 0 => 2, // Ada realisasi Tier 1 dan Tier 2
-            $t1i > 0 || $t2i > 0 => 5, // Hanya ada Tier 1 atau Tier 2 saja
-            default              => 9, // Deteksi sangat buruk (tidak ada inspeksi)
-        };
-
-        $rpn   = $s * $o * $d;
-        $label = $rpn <= 9 ? 'Rendah' : ($rpn <= 99 ? 'Sedang' : 'Tinggi');
-
-        // Determine failure_mode from dominant issue
-        $maxVal  = max($fco, $gnd, $beban, $pjt, $t2t, $t1t);
-        $failure = match(true) {
-            $maxVal === 0          => 'Tidak ada kegagalan teridentifikasi',
-            $gnd  === $maxVal      => 'Gangguan grounding tidak memadai',
-            $fco  === $maxVal      => 'Kegagalan FCO (Fuse Cut Out)',
-            $beban === $maxVal     => 'Overload beban melebihi kapasitas',
-            $pjt  === $maxVal      => 'Vegetasi menghalangi jaringan',
-            $t2t  >= $t1t          => 'Kerusakan mekanik tiang / konduktor',
-            default                => 'Kegagalan isolasi trafo',
-        };
-
-        return [
-            'failure_mode' => $failure,
-            'severity'     => $s,
-            'occurrence'   => $o,
-            'detection'    => $d,
-            'rpn'          => $rpn,
-            'risk_label'   => $label,
-            'catatan'      => 'Dilabeli otomatis berdasarkan data pemeliharaan.',
-        ];
+        return FmeaScorer::score($p);
     }
 }

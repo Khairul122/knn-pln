@@ -99,10 +99,10 @@ function knnQ(int $tahun, string $extra = ''): string {
                             Nilai K (Jumlah Tetangga)
                         </label>
                         <div class="flex items-center gap-3">
-                            <input type="range" name="k_value" id="kSlider" min="1" max="20" value="5"
+                            <input type="range" name="k_value" id="kSlider" min="1" max="20" value="3"
                                    class="flex-1 accent-primary cursor-pointer"
                                    oninput="document.getElementById('kVal').textContent=this.value">
-                            <span class="w-10 h-10 flex items-center justify-center bg-primary text-white rounded-xl font-bold text-lg" id="kVal">5</span>
+                            <span class="w-10 h-10 flex items-center justify-center bg-primary text-white rounded-xl font-bold text-lg" id="kVal">3</span>
                         </div>
                         <p class="text-[11px] text-outline mt-1">K ganjil disarankan untuk menghindari tie (1–20). Data train tersedia: <strong><?= $trainCount ?></strong></p>
                     </div>
