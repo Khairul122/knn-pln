@@ -1,6 +1,7 @@
 /vendor/
 /.claude/
 /.mcp.json
+/AGENT.md
 /storage/logs/
 /storage/sessions/
 /storage/cache/

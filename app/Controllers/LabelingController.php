@@ -274,6 +274,8 @@ class LabelingController extends Controller
             $s = 6; // Penyeimbangan beban gardu
         } elseif ($ukur > 0) {
             $s = 4; // Pengukuran
+        } elseif ($pjt > 0) {
+            $s = 2; // Penghalang panjat
         }
 
         // Occurrence (O) berdasarkan catatan baru
